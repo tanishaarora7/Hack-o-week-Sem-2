@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Urban Spoon | Restaurant Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f8f9fa;
+      color: #333;
+    }
+
+   header {
+  background:
+    linear-gradient(rgba(194, 24, 91, 0.7), rgba(240, 98, 146, 0.7)),
+    url("C:\Users\Lenovo\OneDrive\Desktop\istockphoto-939051976-612x612.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+    nav {
+      background: #fff;
+      position: sticky;
+      top: 0;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+      padding: 12px;
+      gap: 25px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      color: #c2185b;
+    }
+
+    section {
+      padding: 60px 8%;
+    }
+
+    section h2 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2rem;
+      color: #c2185b;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .price {
+      font-weight: 600;
+      color: #c2185b;
+    }
+
+    footer {
+      background: #222;
+      color: #aaa;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Urban Spoon</h1>
+  <p>Taste that feels like home</p>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#starters">Starters</a></li>
+    <li><a href="#main">Main Course</a></li>
+    <li><a href="#beverages">Beverages</a></li>
+    <li><a href="#desserts">Desserts</a></li>
+  </ul>
+</nav>
+
+<!-- Starters -->
+<section id="starters">
+  <h2>Starters</h2>
+  <div class="menu-grid">
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\istockphoto-698454548-612x612.jpg" />
+      <div class="card-content">
+        <h3>Paneer Pakoda</h3>
+        <p>Golden fried paneer with spicy batter</p>
+        <span class="price">₹150</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\istockphoto-1186759790-612x612.jpg" />
+      <div class="card-content">
+        <h3>Paneer Tikka</h3>
+        <p>Grilled cottage cheese with herbs</p>
+        <span class="price">₹220</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\istockphoto-1443993866-612x612.jpg" />
+      <div class="card-content">
+        <h3>French Fries</h3>
+        <p>Crispy salted potato fries</p>
+        <span class="price">₹120</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Main Course -->
+<section id="main">
+  <h2>Main Course</h2>
+  <div class="menu-grid">
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\paneer-butter-masala-recipe.jpg" />
+      <div class="card-content">
+        <h3>Butter Paneer Masala</h3>
+        <p>Paneer in creamy tomato gravy</p>
+        <span class="price">₹320</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\360_F_570586537_TnIgWdCnaTYpgg9gsTyloz5bnvfCtdLl.jpg" />
+      <div class="card-content">
+        <h3>Veg Biryani</h3>
+        <p>Aromatic rice with vegetables</p>
+        <span class="price">₹280</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Beverages -->
+<section id="beverages">
+  <h2>Beverages</h2>
+  <div class="menu-grid">
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\Cafe-style-cold-coffee-with-icecream.jpg" />
+      <div class="card-content">
+        <h3>Cold Coffee</h3>
+        <p>Chilled coffee with milk</p>
+        <span class="price">₹150</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\download (1).jpg" />
+      <div class="card-content">
+        <h3>Fresh Lime Soda</h3>
+        <p>Refreshing lime soda</p>
+        <span class="price">₹120</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Desserts -->
+<section id="desserts">
+  <h2>Desserts</h2>
+  <div class="menu-grid">
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\istockphoto-168731372-612x612.jpg" />
+      <div class="card-content">
+        <h3>Chocolate Brownie</h3>
+        <p>Warm brownie with chocolate sauce</p>
+        <span class="price">₹180</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="C:\Users\Lenovo\OneDrive\Desktop\download.jpg" />
+      <div class="card-content">
+        <h3>Gulab Jamun</h3>
+        <p>Soft syrup soaked dumplings</p>
+        <span class="price">₹140</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+<!-- Team Section -->
+<section class="team" id="team">
+  <h2>Group - 37</h2>
+
+  <div class="team-container">
+
+    <div class="team-card">
+      <h3>Atharva Balpande</h3>
+      <p>PRN: 117</p>
+    </div>
+
+    <div class="team-card">
+      <h3>Pranshu Meshram</h3>
+      <p>PRN: 114</p>
+    </div>
+<div class="team-card">
+      <h3>Tanisha Arora</h3>
+      <p>PRN: 116</p>
+    </div>
+
+
+  </div>
+</section>
+
+
+</footer>
+
+</body>
+</html>
