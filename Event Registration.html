@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SIT Nagpur | Event Registration</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+/* BACKGROUND */
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* CARD */
+.container {
+    width: 520px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 22px;
+    padding: 35px 40px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.35);
+    animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(25px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+/* SECTION */
+.section-title {
+    margin: 25px 0 15px;
+    font-weight: 600;
+    color: #555;
+    border-left: 4px solid #667eea;
+    padding-left: 10px;
+}
+
+/* INPUT FIELD */
+.field {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background: transparent;
+}
+
+.field label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    font-size: 13px;
+    color: #777;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: 0.3s;
+    background: white;
+    padding: 0 6px;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label,
+.field textarea:focus + label,
+.field textarea:not(:placeholder-shown) + label,
+.field select:focus + label {
+    top: -8px;
+    font-size: 11px;
+    color: #667eea;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 10px rgba(102,126,234,0.35);
+}
+
+/* RADIO */
+.radio-group {
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.radio-group label {
+    margin-right: 15px;
+}
+
+/* CHECKBOX */
+.checkbox {
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(to right, #667eea, #764ba2);
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+
+/* SUCCESS */
+.success {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.success span {
+    font-size: 55px;
+    color: #4CAF50;
+}
+
+/* RESPONSIVE */
+@media(max-width: 560px) {
+    .container {
+        width: 92%;
+        padding: 30px;
+    }
+}
+</style>
+
+<script>
+function submitForm() {
+    document.getElementById("success").style.display = "block";
+    return false;
+}
+</script>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Student Event Registration</h2>
+    <div class="subtitle">SIT Nagpur</div>
+
+    <form onsubmit="return submitForm()">
+
+        <!-- PERSONAL DETAILS -->
+        <div class="section-title">Personal Details</div>
+
+        <div class="field">
+            <input type="text" required placeholder=" ">
+            <label>Full Name</label>
+        </div>
+
+        <div class="field">
+            <input type="email" required placeholder=" ">
+            <label>Email Address</label>
+        </div>
+
+        <div class="field">
+            <input type="tel" pattern="[0-9]{10}" required placeholder=" ">
+            <label>Phone Number</label>
+        </div>
+
+        <div class="radio-group">
+            Gender:
+            <label><input type="radio" name="gender" required> Male</label>
+            <label><input type="radio" name="gender"> Female</label>
+            <label><input type="radio" name="gender"> Other</label>
+        </div>
+
+        <!-- ACADEMIC DETAILS -->
+        <div class="section-title">Academic Details</div>
+
+        <div class="field">
+            <input type="text" required placeholder=" ">
+            <label>Roll Number</label>
+        </div>
+
+        <div class="field">
+            <select required>
+                <option value=""></option>
+                <option>CSE</option>
+                <option>IT</option>
+                <option>ECE</option>
+                <option>Mechanical</option>
+                <option>Civil</option>
+            </select>
+            <label>Department</label>
+        </div>
+
+        <!-- EVENT DETAILS -->
+        <div class="section-title">Event Details</div>
+
+        <div class="field">
+            <select required>
+                <option value=""></option>
+                <option>Dance</option>
+                <option>Drama</option>
+                <option>Music</option>
+                <option>Singing</option>
+                <option>Quiz</option>
+                <option>Sports</option>
+            </select>
+            <label>Event Name</label>
+        </div>
+
+        <div class="field">
+            <textarea rows="3" placeholder=" "></textarea>
+            <label>Comments (Optional)</label>
+        </div>
+
+        <div class="checkbox">
+            <input type="checkbox" required> I confirm that the above details are correct
+        </div>
+
+        <button type="submit">Submit Registration</button>
+    </form>
+
+    <div class="success" id="success">
+        <span>✔</span>
+        <h3>Registration Successful</h3>
+        <p>Your details have been submitted.</p>
+    </div>
+</div>
+
+</body>
+</html>
