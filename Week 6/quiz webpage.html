@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Online Quiz</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* Background */
+body{
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* Glass Card */
+.container{
+    width:90%;
+    max-width:850px;
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(10px);
+    border-radius:18px;
+    padding:35px 40px;
+    box-shadow:0 25px 50px rgba(0,0,0,0.25);
+    animation:slideIn 1s ease;
+}
+
+@keyframes slideIn{
+    from{opacity:0;transform:translateY(30px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+h1{
+    text-align:center;
+    color:#512da8;
+    margin-bottom:20px;
+}
+
+/* Input */
+.input-box{
+    margin:15px 0;
+}
+
+.input-box label{
+    font-weight:600;
+}
+
+.input-box input{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #bbb;
+    font-size:15px;
+    margin-top:5px;
+}
+
+/* Button */
+.btn{
+    width:100%;
+    padding:14px;
+    font-size:18px;
+    font-weight:600;
+    background:linear-gradient(to right,#7b1fa2,#512da8);
+    color:white;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin-top:20px;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(0,0,0,0.3);
+}
+
+/* Timer */
+#timer{
+    text-align:right;
+    font-weight:600;
+    color:#d32f2f;
+    margin-bottom:10px;
+}
+
+/* Question */
+.question{
+    background:#f7f3ff;
+    border-left:6px solid #673ab7;
+    padding:18px 20px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+
+.question p{
+    font-weight:600;
+    color:#311b92;
+    font-size:17px;
+}
+
+/* Options */
+.option{
+    display:block;
+    padding:8px 10px;
+    margin:6px 0;
+    border-radius:6px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.option:hover{
+    background:#ede7f6;
+}
+
+/* Result Colors */
+.correct{
+    background:#c8e6c9 !important;
+    border-left:5px solid #2e7d32;
+}
+
+.wrong{
+    background:#ffcdd2 !important;
+    border-left:5px solid #c62828;
+}
+
+/* Explanation */
+.explanation{
+    margin-top:10px;
+    padding:10px;
+    background:#e3f2fd;
+    border-left:4px solid #1976d2;
+    border-radius:6px;
+    font-size:14px;
+    display:none;
+}
+
+/* Hide */
+.hidden{display:none;}
+
+#finalResult{
+    text-align:center;
+    font-size:24px;
+    font-weight:600;
+    color:#2e7d32;
+    margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- LOGIN -->
+<div id="loginPage">
+
+<h1>📝 Student Details</h1>
+
+<div class="input-box">
+<label>Name</label>
+<input type="text" id="name">
+</div>
+
+<div class="input-box">
+<label>PRN</label>
+<input type="text" id="prn">
+</div>
+
+<div class="input-box">
+<label>Email</label>
+<input type="email" id="email">
+</div>
+
+<button class="btn" onclick="startQuiz()">Start Quiz 🚀</button>
+
+</div>
+
+<!-- QUIZ -->
+<div id="quizPage" class="hidden">
+
+<div id="timer">⏳ 10:00</div>
+
+<h1>📘 Online MCQ Test</h1>
+
+<form id="quizForm">
+
+<!-- Q1 -->
+<div class="question" data-answer="1">
+
+<p>1. What is HTML?</p>
+
+<label class="option">
+<input type="radio" name="q1" value="0"> Programming Language
+</label>
+
+<label class="option">
+<input type="radio" name="q1" value="1"> Markup Language
+</label>
+
+<label class="option">
+<input type="radio" name="q1" value="0"> Database
+</label>
+
+<div class="explanation">
+HTML is a markup language used to structure web pages.
+</div>
+
+</div>
+
+<!-- Q2 -->
+<div class="question" data-answer="1">
+
+<p>2. Which tag is used for paragraph?</p>
+
+<label class="option">
+<input type="radio" name="q2" value="1"> &lt;p&gt;
+</label>
+
+<label class="option">
+<input type="radio" name="q2" value="0"> &lt;h&gt;
+</label>
+
+<label class="option">
+<input type="radio" name="q2" value="0"> &lt;div&gt;
+</label>
+
+<div class="explanation">
+&lt;p&gt; tag is used to define paragraphs in HTML.
+</div>
+
+</div>
+
+<!-- Q3 -->
+<div class="question" data-answer="1">
+
+<p>3. Which language is used for styling?</p>
+
+<label class="option">
+<input type="radio" name="q3" value="0"> HTML
+</label>
+
+<label class="option">
+<input type="radio" name="q3" value="1"> CSS
+</label>
+
+<label class="option">
+<input type="radio" name="q3" value="0"> C++
+</label>
+
+<div class="explanation">
+CSS controls layout, colors, and fonts of webpages.
+</div>
+
+</div>
+
+<!-- Q4 -->
+<div class="question" data-answer="1">
+
+<p>4. JavaScript is used for?</p>
+
+<label class="option">
+<input type="radio" name="q4" value="1"> Interactivity
+</label>
+
+<label class="option">
+<input type="radio" name="q4" value="0"> Designing
+</label>
+
+<label class="option">
+<input type="radio" name="q4" value="0"> Database
+</label>
+
+<div class="explanation">
+JavaScript makes websites dynamic and interactive.
+</div>
+
+</div>
+
+<!-- Q5 -->
+<div class="question" data-answer="1">
+
+<p>5. Which is a browser?</p>
+
+<label class="option">
+<input type="radio" name="q5" value="0"> Linux
+</label>
+
+<label class="option">
+<input type="radio" name="q5" value="1"> Chrome
+</label>
+
+<label class="option">
+<input type="radio" name="q5" value="0"> Windows
+</label>
+
+<div class="explanation">
+Google Chrome is a web browser.
+</div>
+
+</div>
+
+<button type="button" class="btn" onclick="submitQuiz()">
+Submit Quiz ✅
+</button>
+
+<div id="finalResult"></div>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+let time = 600;
+let timer;
+
+function startQuiz(){
+
+    let n=document.getElementById("name").value;
+    let p=document.getElementById("prn").value;
+    let e=document.getElementById("email").value;
+
+    if(n==""||p==""||e==""){
+        alert("Please fill all details");
+        return;
+    }
+
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("quizPage").classList.remove("hidden");
+
+    startTimer();
+}
+
+/* Timer */
+function startTimer(){
+
+    timer=setInterval(()=>{
+
+        let min=Math.floor(time/60);
+        let sec=time%60;
+
+        sec=sec<10?"0"+sec:sec;
+
+        document.getElementById("timer").innerHTML=
+        "⏳ "+min+":"+sec;
+
+        time--;
+
+        if(time<0){
+            clearInterval(timer);
+            submitQuiz();
+            alert("Time Over!");
+        }
+
+    },1000);
+}
+
+/* Submit */
+function submitQuiz(){
+
+    clearInterval(timer);
+
+    let score=0;
+    let questions=document.querySelectorAll(".question");
+
+    questions.forEach(q=>{
+
+        let correct=q.dataset.answer;
+        let selected=q.querySelector("input:checked");
+        let explain=q.querySelector(".explanation");
+
+        if(selected){
+
+            if(selected.value===correct){
+                score++;
+                q.classList.add("correct");
+            }else{
+                q.classList.add("wrong");
+                explain.style.display="block";
+            }
+        }else{
+            q.classList.add("wrong");
+            explain.style.display="block";
+        }
+
+    });
+
+    let name=document.getElementById("name").value;
+
+    document.getElementById("finalResult").innerHTML=
+    "🎉 "+name+", Your Score: "+score+" / 5";
+
+}
+
+</script>
+
+</body>
+</html>
