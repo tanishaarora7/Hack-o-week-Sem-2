@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pause Between Places</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins', sans-serif;
+    background:#f8f6f2;
+    color:#333;
+    line-height:1.7;
+}
+
+/* NAV */
+nav{
+    position:fixed;
+    width:100%;
+    background:white;
+    padding:20px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 15px rgba(0,0,0,0.08);
+    z-index:1000;
+}
+
+nav h2{
+    font-family:'Playfair Display', serif;
+    color:#2c6e91;
+}
+
+nav ul{
+    list-style:none;
+    display:flex;
+    gap:30px;
+}
+
+nav a{
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    transition:0.3s;
+}
+
+nav a:hover{
+    color:#2c6e91;
+}
+
+/* GENERAL SECTIONS */
+section{
+    padding:120px 10%;
+    max-width:1100px;
+    margin:auto;
+}
+
+/* HERO */
+.hero{
+    height:100vh;
+    background:url('https://wallpaperaccess.com/full/185289.jpg') center/cover no-repeat;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    color:white;
+}
+
+.hero h1{
+    font-family:'Playfair Display', serif;
+    font-size:55px;
+    max-width:800px;
+}
+
+.hero p{
+    margin-top:20px;
+    font-size:20px;
+    font-weight:300;
+}
+
+/* ABOUT */
+.about{
+    text-align:center;
+}
+
+.about h2{
+    font-family:'Playfair Display', serif;
+    margin-bottom:20px;
+}
+
+.about p{
+    max-width:750px;
+    margin:auto;
+    color:#555;
+}
+
+/* BLOG POSTS */
+.blog{
+    margin-top:40px;
+}
+
+.blog h2{
+    text-align:center;
+    font-family:'Playfair Display', serif;
+    margin-bottom:50px;
+}
+
+.post{
+    margin-bottom:80px;
+}
+
+.post img{
+    width:100%;
+    border-radius:15px;
+    margin-bottom:25px;
+}
+
+.post h3{
+    font-family:'Playfair Display', serif;
+    font-size:28px;
+    margin-bottom:10px;
+    color:#2c6e91;
+}
+
+.meta{
+    font-size:14px;
+    color:#888;
+    margin-bottom:20px;
+}
+
+.post p{
+    margin-bottom:18px;
+    color:#444;
+}
+
+/* GALLERY */
+.gallery h2{
+    text-align:center;
+    font-family:'Playfair Display', serif;
+    margin-bottom:40px;
+}
+
+.gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.gallery-grid img{
+    width:100%;
+    height:250px;
+    object-fit:cover;
+    border-radius:12px;
+}
+
+/* CONTACT */
+.contact{
+    text-align:center;
+}
+
+.contact h2{
+    font-family:'Playfair Display', serif;
+    margin-bottom:25px;
+}
+
+.contact form{
+    max-width:500px;
+    margin:auto;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.contact input, .contact textarea{
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.contact button{
+    padding:12px;
+    border:none;
+    background:#2c6e91;
+    color:white;
+    border-radius:25px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.contact button:hover{
+    background:#1e4f6a;
+}
+
+footer{
+    text-align:center;
+    padding:25px;
+    background:#2c6e91;
+    color:white;
+    margin-top:60px;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>Pause Between Places</h2>
+    <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#stories">Stories</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <div>
+        <h1>Exploring the World, One Meaningful Journey at a Time</h1>
+        <p>Travel stories, emotions, and the quiet growth that happens in between.</p>
+    </div>
+</section>
+
+<section class="about" id="about">
+    <h2>About Me</h2>
+    <p>
+        I travel not just to see places, but to feel them. For me, every journey is a pause — a pause from routine, from noise, from expectations. I believe the most beautiful parts of travel aren’t just landscapes, but the emotions they leave behind. Through this blog, I share stories that changed me, shaped me, and reminded me who I truly am.
+    </p>
+</section>
+
+<section class="blog" id="stories">
+    <h2>Travel Stories</h2>
+
+    <div class="post">
+        <img src="https://www.travellingking.com/wp-content/uploads/2017/11/tobias-winkelmann-367873.jpg">
+        <h3>Bali, Indonesia — Where Time Slows Down</h3>
+        <div class="meta">June 2025 • Solo Trip</div>
+        <p>
+            Bali felt like stepping into a soft dream. Mornings began with golden sunlight falling gently over endless rice fields, and evenings ended with the sky painted in shades of orange and pink. I remember sitting by the beach, letting the waves wash over my thoughts.
+        </p>
+        <p>
+            There was something about Bali that made me slow down. No rushing. No chasing. Just breathing. I explored temples wrapped in silence, met strangers who felt like old friends, and discovered a version of myself that felt lighter and calmer.
+        </p>
+        <p>
+            Bali didn’t just give me memories. It gave me perspective — that life doesn’t need to be fast to be meaningful.
+        </p>
+    </div>
+
+    <div class="post">
+        <img src="https://wallpaperbat.com/img/178601-paris-france-eiffel-tower-wallpaper.jpg">
+        <h3>Paris, France — A City That Feels Like Poetry</h3>
+        <div class="meta">September 2025 • Cultural Escape</div>
+        <p>
+            Paris was everything I imagined and more. The quiet charm of cafés, the soft glow of street lights at night, and the timeless elegance of the Eiffel Tower created moments that felt cinematic.
+        </p>
+        <p>
+            I spent hours walking with no destination, allowing the city to surprise me. Art museums, cobblestone streets, and live music drifting through the air — Paris didn’t demand attention, it gently invited it.
+        </p>
+        <p>
+            It reminded me that beauty lives in the details — in warm coffee cups, handwritten menus, and silent glances between strangers.
+        </p>
+    </div>
+
+    <div class="post">
+        <img src="https://lp-cms-production.imgix.net/2019-06/GettyImages-149353949_high.jpg?fit=crop&q=40&sharp=10&vib=20&auto=format&ixlib=react-8.6.4">
+        <h3>Himachal, India — Conversations with the Mountains</h3>
+        <div class="meta">December 2025 • Winter Retreat</div>
+        <p>
+            The mountains of Himachal didn’t just surround me — they grounded me. Crisp winter air, snow-dusted peaks, and skies filled with a thousand stars created a silence I didn’t know I needed.
+        </p>
+        <p>
+            I remember sitting outside my stay at night, wrapped in a blanket, watching the mountains stand still and strong. They taught me resilience. They taught me patience.
+        </p>
+        <p>
+            Himachal wasn’t loud or dramatic. It was steady. Calm. Honest. And somewhere between those quiet valleys, I found clarity.
+        </p>
+    </div>
+
+</section>
+
+<section class="gallery" id="gallery">
+    <h2>Gallery</h2>
+    <div class="gallery-grid">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">
+        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470">
+        <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a">
+    </div>
+</section>
+
+<section class="contact" id="contact">
+    <h2>Contact Me</h2>
+    <form>
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea rows="5" placeholder="Your Message"></textarea>
+        <button type="submit">Send Message</button>
+    </form>
+</section>
+
+<footer>
+    © 2026 Pause Between Places | Not all those who wander are lost.
+</footer>
+
+</body>
+</html>
+
+
