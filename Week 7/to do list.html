@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Dashboard</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI}
+
+body{
+  background:#f4f6fb;
+}
+
+/* LAYOUT */
+.container{
+  display:flex;
+  height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:250px;
+  background:#ff5b5b;
+  color:white;
+  padding:25px;
+}
+
+.profile{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.profile img{
+  width:70px;
+  border-radius:50%;
+}
+
+.menu div{
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.menu div:hover{
+  background:rgba(255,255,255,0.2);
+}
+
+/* MAIN AREA */
+.main{
+  flex:1;
+  padding:25px;
+}
+
+/* TOP BAR */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:25px;
+}
+
+.search{
+  width:60%;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#eee;
+}
+
+/* WELCOME */
+.welcome{
+  font-size:26px;
+  margin-bottom:20px;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+}
+
+/* TASK CARDS */
+.card{
+  background:white;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom:15px;
+}
+
+.task{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 0;
+  border-bottom:1px solid #eee;
+}
+
+.task:last-child{border:none}
+
+.completed span{
+  text-decoration:line-through;
+  color:gray;
+}
+
+/* STATUS CIRCLES */
+.status{
+  display:flex;
+  justify-content:space-around;
+  text-align:center;
+}
+
+.circle{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-weight:bold;
+}
+
+.green{background:#2ecc71}
+.blue{background:#3498db}
+.gray{background:#bdc3c7}
+
+/* BUTTON */
+button{
+  background:#ff5b5b;
+  border:none;
+  padding:8px 15px;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="profile">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRI9lRck6miglY0SZF_BZ_sK829yiNskgYRUg&s">
+    <h3>User</h3>
+    <small>user@email.com</small>
+  </div>
+
+  <div class="menu">
+    <div>🏠 Dashboard</div>
+    <div>⚡ Vital Task</div>
+    <div>📋 My Task</div>
+    <div>⚙ Settings</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="topbar">
+  <input class="search" placeholder="Search your task here...">
+  <div>Tuesday<br><b id="date"></b></div>
+</div>
+
+<div class="welcome">Welcome back 👋</div>
+
+<div class="grid">
+
+<!-- TASK SECTION -->
+<div>
+<div class="card">
+  <h3>To-Do</h3>
+  <br>
+  <input id="taskInput" placeholder="Add task..." style="width:70%;padding:8px">
+  <button onclick="addTask()">Add</button>
+  <br><br>
+  <div id="taskList"></div>
+</div>
+</div>
+
+<!-- STATUS PANEL -->
+<div>
+<div class="card">
+  <h3>Task Status</h3>
+  <br>
+  <div class="status">
+    <div>
+      <div class="circle green" id="done">0%</div>
+      <small>Completed</small>
+    </div>
+    <div>
+      <div class="circle blue" id="progress">0%</div>
+      <small>Pending</small>
+    </div>
+    <div>
+      <div class="circle gray" id="total">0%</div>
+      <small>Total</small>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function save(){
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function addTask(){
+  let text = taskInput.value;
+  if(!text) return;
+  tasks.push({text,done:false});
+  taskInput.value="";
+  save();
+  render();
+}
+
+function toggle(i){
+  tasks[i].done=!tasks[i].done;
+  save();
+  render();
+}
+
+function del(i){
+  tasks.splice(i,1);
+  save();
+  render();
+}
+
+function render(){
+  let list="";
+  let doneCount=0;
+
+  tasks.forEach((t,i)=>{
+    if(t.done) doneCount++;
+
+    list+=`
+    <div class="task ${t.done?"completed":""}">
+      <div>
+        <input type="checkbox" ${t.done?"checked":""} onclick="toggle(${i})">
+        <span>${t.text}</span>
+      </div>
+      <button onclick="del(${i})">X</button>
+    </div>`;
+  });
+
+  taskList.innerHTML=list;
+
+  let total=tasks.length;
+  let donePercent = total? Math.round(doneCount/total*100):0;
+  let pendingPercent = total? 100-donePercent:0;
+
+  document.getElementById("done").innerText=donePercent+"%";
+  document.getElementById("progress").innerText=pendingPercent+"%";
+  document.getElementById("total").innerText=total;
+}
+
+document.getElementById("date").innerText=new Date().toLocaleDateString();
+
+render();
+</script>
+
+</body>
+</html>
