@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stylegenix Shop</title>
+
+<style>
+body{margin:0;font-family:Segoe UI,Arial;background:#f4f6fb}
+
+header{
+  background:linear-gradient(90deg,#6a11cb,#2575fc);
+  color:#fff;padding:18px 30px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+}
+header h1{margin:0;letter-spacing:1px}
+
+.search-box input{
+  padding:10px;border:none;border-radius:25px;width:240px;outline:none;
+}
+
+.gender-filter{
+  text-align:center;margin-top:20px;
+}
+.gender-filter button{
+  margin:5px;padding:10px 18px;border:none;border-radius:20px;
+  background:#eee;cursor:pointer;font-weight:600;
+}
+.gender-filter button.active{background:#2575fc;color:#fff}
+
+.container{padding:30px}
+
+.category-title{
+  margin:40px 0 15px;font-size:22px;font-weight:600;color:#333;
+  border-left:5px solid #2575fc;padding-left:10px;
+}
+
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;
+}
+
+.card{
+  background:#fff;border-radius:12px;padding:15px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  transition:.3s;display:flex;flex-direction:column;
+}
+.card:hover{transform:translateY(-6px)}
+
+.card img{
+  width:100%;height:160px;object-fit:cover;border-radius:10px;
+}
+
+.card h3{margin:10px 0 4px}
+.price{color:#e63946;font-weight:bold}
+.desc{font-size:14px;color:#555;margin:8px 0;flex-grow:1}
+
+button.cart{
+  background:#2575fc;color:#fff;border:none;padding:10px;
+  border-radius:6px;cursor:pointer;transition:.3s;
+}
+button.cart:hover{background:#184dc0}
+
+footer{
+  background:#111;color:#fff;text-align:center;padding:25px;margin-top:40px
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🛍️ Stylegenix</h1>
+<div class="search-box">
+<input type="text" id="search" placeholder="Search products..." onkeyup="searchProducts()">
+</div>
+</header>
+
+<div class="gender-filter">
+<button class="active" onclick="filterGender('All',this)">All</button>
+<button onclick="filterGender('Men',this)">Men</button>
+<button onclick="filterGender('Women',this)">Women</button>
+</div>
+
+<div class="container" id="productContainer"></div>
+
+<footer>
+<p><b>Contact:</b> stylegenix@email.com | +91 98765 43210</p>
+<p>© 2026 Stylegenix — Fashion for Everyone</p>
+</footer>
+
+<script>
+let currentGender="All";
+
+const products=[
+
+{gender:"Men",cat:"Clothing",name:"Men T-Shirt",price:"₹599",desc:"Soft cotton everyday wear.",img:"https://www.evovogue.in/cdn/shop/files/oversized-t-shirt-mockup-male-model-in-skatepark-graffiti-background-urban-streetwear-vibe-0758_28.png?v=1742333459&width=713"},
+{gender:"Men",cat:"Clothing",name:"Denim Jacket",price:"₹2499",desc:"Stylish all-season jacket.",img:"https://www.urbanofashion.com/cdn/shop/files/jakt-denimvint-dblue_ea174286-d9fa-4e9f-9835-8f1a49b5ac28.jpg?v=1758282519"},
+{gender:"Women",cat:"Clothing",name:"Women Kurti",price:"₹1299",desc:"Elegant casual wear.",img:"https://rukminim2.flixcart.com/image/1536/1536/xif0q/ethnic-set/k/q/v/m-roman-silk-tasrika-original-imahy5gm9ukeqzy8.jpeg?q=90"},
+{gender:"Women",cat:"Clothing",name:"Women Hoodie",price:"₹1799",desc:"Warm & cozy hoodie.",img:"https://www.mystore.in/s/62ea2c599d1398fa16dbae0a/64e85f1f6d48af0101055c58/d9157_512-800x800.webp"},
+
+{gender:"Men",cat:"Accessories",name:"Leather Wallet",price:"₹899",desc:"Premium leather wallet.",img:"https://urbanforest.co.in/cdn/shop/files/A7402041.jpg?v=1733571068&width=823"},
+{gender:"Men",cat:"Accessories",name:"Sports Watch",price:"₹3499",desc:"Water-resistant watch.",img:"https://v2awatch.com/cdn/shop/files/3_38aa72d2-9172-495b-8d87-55d188f008b5.jpg?v=1754308949&width=800"},
+{gender:"Women",cat:"Accessories",name:"Sunglasses",price:"₹799",desc:"UV protection shades.",img:"https://m.media-amazon.com/images/I/61MMoCNeXzL._SX679_.jpg"},
+{gender:"Women",cat:"Accessories",name:"Handbag",price:"₹1599",desc:"Stylish daily handbag.",img:"https://sennes.s3.ap-south-1.amazonaws.com/image/product/leatherbags/LPWBAG-D000695155-1.jpg"},
+{gender:"Men",cat:"Accessories",name:"Cap",price:"₹399",desc:"Adjustable stylish cap.",img:"https://image.hm.com/assets/hm/6b/cb/6bcb31b7a42ad0f3943614183374f50afebabf31.jpg?imwidth=2160"},
+{gender:"Women",cat:"Accessories",name:"Perfume",price:"₹1499",desc:"Long lasting fragrance.",img:"https://static.zara.net/assets/public/f9df/d0c9/618440aa91df/c11141bdd2a0/20210651999-e1/20210651999-e1.jpg?ts=1765990305956&w=1024"}
+
+];
+
+function displayProducts(){
+const container=document.getElementById("productContainer");
+container.innerHTML="";
+
+let filtered=products;
+if(currentGender!=="All"){
+filtered=products.filter(p=>p.gender===currentGender);
+}
+
+const searchTerm=document.getElementById("search").value.toLowerCase();
+filtered=filtered.filter(p=>p.name.toLowerCase().includes(searchTerm));
+
+const categories=[...new Set(filtered.map(p=>p.cat))];
+
+categories.forEach(cat=>{
+const title=document.createElement("div");
+title.className="category-title";
+title.innerText=cat;
+container.appendChild(title);
+
+const grid=document.createElement("div");
+grid.className="grid";
+
+filtered.filter(p=>p.cat===cat).forEach(p=>{
+const card=document.createElement("div");
+card.className="card";
+card.innerHTML=`
+<img src="${p.img}">
+<h3>${p.name}</h3>
+<div class="price">${p.price}</div>
+<div class="desc">${p.desc}</div>
+<button class="cart" onclick="addCart()">Add to Cart</button>`;
+
+grid.appendChild(card);
+});
+
+container.appendChild(grid);
+});
+}
+
+function filterGender(gender,btn){
+currentGender=gender;
+document.querySelectorAll(".gender-filter button").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+displayProducts();
+}
+
+function searchProducts(){displayProducts();}
+function addCart(){alert("Added to cart (Demo UI)");}
+
+displayProducts();
+</script>
+
+</body>
+</html>
