@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Clips Gallery</title>
+
+<style>
+
+/* GOOGLE FONT */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+/* ANIMATED BACKGROUND */
+
+body{
+min-height:100vh;
+background:linear-gradient(-45deg,#ff6a00,#ee0979,#00c6ff,#0072ff);
+background-size:400% 400%;
+animation:gradientBG 10s ease infinite;
+color:white;
+transition:0.5s;
+}
+
+@keyframes gradientBG{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* HEADER */
+
+header{
+text-align:center;
+padding:40px 20px;
+}
+
+header h1{
+font-size:42px;
+font-weight:700;
+letter-spacing:1px;
+}
+
+header p{
+margin-top:10px;
+opacity:0.9;
+}
+
+#themeToggle{
+margin-top:20px;
+padding:10px 20px;
+border:none;
+border-radius:25px;
+background:white;
+color:black;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+#themeToggle:hover{
+transform:scale(1.1);
+}
+
+/* ABOUT */
+
+.about{
+text-align:center;
+max-width:700px;
+margin:auto;
+padding:30px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
+border-radius:15px;
+margin-bottom:30px;
+}
+
+/* GALLERY */
+
+.gallery{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+padding:40px;
+}
+
+.card{
+position:relative;
+border-radius:15px;
+overflow:hidden;
+cursor:pointer;
+
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
+
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+
+transition:0.4s;
+}
+
+.card:hover{
+transform:translateY(-10px) scale(1.03);
+}
+
+.card img{
+width:100%;
+height:200px;
+object-fit:cover;
+transition:0.4s;
+}
+
+.card:hover img{
+transform:scale(1.2);
+}
+
+/* IMAGE OVERLAY */
+
+.overlay{
+position:absolute;
+bottom:0;
+width:100%;
+padding:10px;
+background:rgba(0,0,0,0.6);
+text-align:center;
+font-weight:bold;
+opacity:0;
+transition:0.4s;
+}
+
+.card:hover .overlay{
+opacity:1;
+}
+
+/* LIGHTBOX */
+
+.lightbox{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.85);
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+backdrop-filter:blur(10px);
+animation:fade 0.4s;
+}
+
+.lightbox img{
+max-width:80%;
+max-height:80%;
+border-radius:10px;
+box-shadow:0 0 20px black;
+}
+
+.close{
+position:absolute;
+top:30px;
+right:40px;
+font-size:40px;
+cursor:pointer;
+}
+
+/* ARROWS */
+
+.prev,.next{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+font-size:50px;
+color:white;
+cursor:pointer;
+padding:10px;
+}
+
+.prev{left:40px;}
+.next{right:40px;}
+
+@keyframes fade{
+from{opacity:0;}
+to{opacity:1;}
+}
+
+/* FOOTER */
+
+footer{
+text-align:center;
+padding:25px;
+margin-top:40px;
+background:rgba(0,0,0,0.4);
+}
+
+/* DARK MODE */
+
+.dark{
+background:#111;
+animation:none;
+}
+
+.dark .about,
+.dark .card{
+background:rgba(0,0,0,0.6);
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+header h1{
+font-size:30px;
+}
+
+.lightbox img{
+max-width:95%;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>📸 Dream Clips Gallery</h1>
+<p>Capturing moments, emotions, and unforgettable stories.</p>
+
+<button id="themeToggle">🌙 Toggle Theme</button>
+</header>
+
+<section class="about">
+<h2>About Dream Clips</h2>
+<p>
+I am passionate about capturing beautiful landscapes, wildlife,
+and moments that tell a story. Every photograph represents a
+unique perspective of the world through my lens.
+</p>
+</section>
+
+<section class="gallery">
+
+<div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Altja_j%C3%B5gi_Lahemaal.jpg/500px-Altja_j%C3%B5gi_Lahemaal.jpg">Nature</div></div>
+<div class="card"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg/500px-Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg"><div class="overlay">Mountains</div></div>
+<div class="card"><img src="https://biodt.eu/sites/default/files/2024-09/Forest%20Biodiversity%20Dynamics.jpg">Forest</div></div>
+<div class="card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcos8--FRzsBIwYidtv5oS6TeFs098G-YAKg&s">Beach</div></div>
+<div class="card"><img src="https://i0.wp.com/blog.education.nationalgeographic.org/wp-content/uploads/2013/10/29598.jpg">Sunset</div></div>
+<div class="card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShw6cbfNYE1t9-lJAbxqk4trgFBWaqF1fuzw&s"><div class="overlay">Wildlife</div></div>
+<div class="card"><img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2l0eXxlbnwwfHwwfHx8MA%3D%3D">City</div></div>
+<div class="card"><img src="https://media.istockphoto.com/id/904172104/photo/weve-made-it-all-this-way-i-am-proud.jpg?s=612x612&w=0&k=20&c=MewnsAhbeGRcMBN9_ZKhThmqPK6c8nCT8XYk5ZM_hdg=">Travel</div></div>
+<div class="card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTryUApX-Rb-HtcAY-T6N1RNtvRF86luRGHxg&s">River</div></div>
+
+</section>
+
+<!-- LIGHTBOX -->
+
+<div class="lightbox" id="lightbox">
+
+<span class="close">&times;</span>
+
+<img id="lightbox-img">
+
+<div class="prev">&#10094;</div>
+<div class="next">&#10095;</div>
+
+</div>
+
+<footer>
+<p>© 2026 Photographer Portfolio | Designed with ❤️</p>
+</footer>
+
+<script>
+
+/* SELECT ELEMENTS */
+
+const cards=document.querySelectorAll(".card img")
+const lightbox=document.getElementById("lightbox")
+const lightboxImg=document.getElementById("lightbox-img")
+
+const next=document.querySelector(".next")
+const prev=document.querySelector(".prev")
+const close=document.querySelector(".close")
+
+let index=0
+
+/* OPEN */
+
+cards.forEach((img,i)=>{
+
+img.addEventListener("click",()=>{
+
+lightbox.style.display="flex"
+lightboxImg.src=img.src
+index=i
+
+})
+
+})
+
+/* CLOSE */
+
+close.onclick=()=>{
+lightbox.style.display="none"
+}
+
+/* NEXT */
+
+next.onclick=()=>{
+
+index++
+
+if(index>=cards.length) index=0
+
+lightboxImg.src=cards[index].src
+
+}
+
+/* PREVIOUS */
+
+prev.onclick=()=>{
+
+index--
+
+if(index<0) index=cards.length-1
+
+lightboxImg.src=cards[index].src
+
+}
+
+/* KEYBOARD NAVIGATION */
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.key==="ArrowRight") next.onclick()
+if(e.key==="ArrowLeft") prev.onclick()
+if(e.key==="Escape") lightbox.style.display="none"
+
+})
+
+/* CLOSE OUTSIDE CLICK */
+
+lightbox.addEventListener("click",(e)=>{
+
+if(e.target!==lightboxImg){
+lightbox.style.display="none"
+}
+
+})
+
+/* DARK MODE */
+
+const toggle=document.getElementById("themeToggle")
+
+toggle.onclick=()=>{
+document.body.classList.toggle("dark")
+}
+
+</script>
+
+</body>
+</html>
