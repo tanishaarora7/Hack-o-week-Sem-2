@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Development Bootcamp</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+scroll-behavior:smooth;
+}
+
+body{
+background:#f5f7ff;
+color:#333;
+}
+
+/* NAVBAR */
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 8%;
+position:fixed;
+width:100%;
+top:0;
+z-index:1000;
+transition:0.3s;
+}
+
+nav.scrolled{
+background:white;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+nav h2{
+color:#4f46e5;
+}
+
+nav ul{
+display:flex;
+list-style:none;
+gap:25px;
+}
+
+nav a{
+text-decoration:none;
+color:#333;
+font-weight:500;
+}
+
+nav a:hover{
+color:#4f46e5;
+}
+
+/* HERO */
+
+.hero{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:0 20px;
+background:linear-gradient(135deg,#6366f1,#9333ea);
+color:white;
+}
+
+.hero h1{
+font-size:48px;
+margin-bottom:20px;
+}
+
+.hero p{
+font-size:18px;
+margin-bottom:30px;
+}
+
+.btn{
+padding:12px 28px;
+border:none;
+border-radius:30px;
+font-weight:600;
+cursor:pointer;
+margin:10px;
+transition:0.3s;
+}
+
+.btn-primary{
+background:white;
+color:#4f46e5;
+}
+
+.btn-primary:hover{
+transform:scale(1.05);
+}
+
+.btn-outline{
+background:transparent;
+border:2px solid white;
+color:white;
+}
+
+.btn-outline:hover{
+background:white;
+color:#4f46e5;
+}
+
+/* SECTION */
+
+section{
+padding:80px 10%;
+text-align:center;
+}
+
+section h2{
+margin-bottom:40px;
+font-size:32px;
+}
+
+/* CARDS */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 10px 20px rgba(0,0,0,0.1);
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+}
+
+/* FEATURES */
+
+.icon{
+font-size:35px;
+color:#6366f1;
+margin-bottom:15px;
+}
+
+/* INSTRUCTOR */
+
+.instructor{
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+gap:30px;
+justify-content:center;
+}
+
+.instructor img{
+width:200px;
+border-radius:50%;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
+
+.instructor p{
+max-width:500px;
+}
+
+/* TESTIMONIAL */
+
+.testimonial{
+font-style:italic;
+}
+
+/* PRICING */
+
+.price{
+font-size:40px;
+color:#4f46e5;
+margin:20px 0;
+}
+
+/* FAQ */
+
+.faq-item{
+background:white;
+margin-bottom:10px;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+.faq-question{
+padding:15px;
+cursor:pointer;
+font-weight:600;
+background:#eef2ff;
+}
+
+.faq-answer{
+padding:15px;
+display:none;
+}
+
+/* FOOTER */
+
+footer{
+background:#111827;
+color:white;
+padding:40px 10%;
+text-align:center;
+}
+
+.social i{
+margin:10px;
+font-size:20px;
+cursor:pointer;
+}
+
+.social i:hover{
+color:#6366f1;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:768px){
+
+.hero h1{
+font-size:32px;
+}
+
+nav ul{
+display:none;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+
+<nav id="navbar">
+<h2>CodeBootcamp</h2>
+<ul>
+<li><a href="#about">About</a></li>
+<li><a href="#curriculum">Curriculum</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#pricing">Pricing</a></li>
+<li><a href="#faq">FAQ</a></li>
+</ul>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+<div>
+<h1>Become a Full-Stack Web Developer in 8 Weeks</h1>
+<p>Join our intensive Web Development Bootcamp and build real-world projects using modern technologies.</p>
+
+<button class="btn btn-primary">Enroll Now</button>
+<button class="btn btn-outline">View Curriculum</button>
+</div>
+</section>
+
+<!-- ABOUT -->
+
+<section id="about">
+<h2>About the Bootcamp</h2>
+
+<p>Our Web Development Bootcamp is designed for beginners and aspiring developers who want to build modern websites and applications. Learn industry-relevant skills through hands-on projects.</p>
+
+<br>
+
+<div class="grid">
+
+<div class="card">HTML</div>
+<div class="card">CSS</div>
+<div class="card">JavaScript</div>
+<div class="card">React</div>
+<div class="card">Node.js</div>
+
+</div>
+</section>
+
+<!-- CURRICULUM -->
+
+<section id="curriculum">
+<h2>Course Curriculum</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Web Fundamentals</h3>
+<p>HTML & CSS Basics</p>
+</div>
+
+<div class="card">
+<h3>JavaScript</h3>
+<p>Core programming concepts</p>
+</div>
+
+<div class="card">
+<h3>Frontend Framework</h3>
+<p>React.js development</p>
+</div>
+
+<div class="card">
+<h3>Backend</h3>
+<p>Node.js & APIs</p>
+</div>
+
+<div class="card">
+<h3>Final Project</h3>
+<p>Build a real world app</p>
+</div>
+
+</div>
+</section>
+
+<!-- FEATURES -->
+
+<section id="features">
+<h2>Bootcamp Features</h2>
+
+<div class="grid">
+
+<div class="card">
+<i class="fa-solid fa-video icon"></i>
+<h3>Live Classes</h3>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-laptop-code icon"></i>
+<h3>Industry Projects</h3>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-certificate icon"></i>
+<h3>Certificate</h3>
+</div>
+
+<div class="card">
+<i class="fa-solid fa-briefcase icon"></i>
+<h3>Placement Assistance</h3>
+</div>
+
+</div>
+</section>
+
+<!-- INSTRUCTOR -->
+
+<section>
+<h2>Meet Your Instructor</h2>
+
+<div class="instructor">
+
+<img src="https://randomuser.me/api/portraits/men/32.jpg">
+
+<div>
+<h3>Rahul Sharma</h3>
+<p>Full-Stack Developer with 10+ years of experience. He has worked with top tech companies and trained over 5000+ students worldwide.</p>
+</div>
+
+</div>
+</section>
+
+<!-- TESTIMONIALS -->
+
+<section>
+<h2>Student Testimonials</h2>
+
+<div class="grid">
+
+<div class="card testimonial">
+"Best coding bootcamp! I built my first full-stack project in just weeks."
+<br><br>– Aditi
+</div>
+
+<div class="card testimonial">
+"Amazing mentors and practical projects. Highly recommended!"
+<br><br>– Rohan
+</div>
+
+<div class="card testimonial">
+"I got my first developer internship after completing this course."
+<br><br>– Karan
+</div>
+
+</div>
+</section>
+
+<!-- PRICING -->
+
+<section id="pricing">
+<h2>Bootcamp Pricing</h2>
+
+<div class="price">₹9,999</div>
+
+<button class="btn btn-primary">Register Now</button>
+
+</section>
+
+<!-- FAQ -->
+
+<section id="faq">
+<h2>Frequently Asked Questions</h2>
+
+<div class="faq-item">
+<div class="faq-question">Do I need coding experience?</div>
+<div class="faq-answer">No, this bootcamp starts from beginner level.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">Will I get a certificate?</div>
+<div class="faq-answer">Yes, you will receive a certificate after completing the course.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">Are classes live?</div>
+<div class="faq-answer">Yes, all sessions are conducted live with instructors.</div>
+</div>
+
+<div class="faq-item">
+<div class="faq-question">Will you help with jobs?</div>
+<div class="faq-answer">Yes, we provide placement assistance and interview preparation.</div>
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+
+<h3>CodeBootcamp</h3>
+
+<p>Email: info@codebootcamp.com</p>
+<p>Phone: +91 9876543210</p>
+
+<div class="social">
+<i class="fab fa-facebook"></i>
+<i class="fab fa-instagram"></i>
+<i class="fab fa-linkedin"></i>
+<i class="fab fa-twitter"></i>
+</div>
+
+<p style="margin-top:20px">© 2026 CodeBootcamp. All Rights Reserved.</p>
+
+</footer>
+
+<script>
+
+/* Navbar scroll effect */
+
+window.addEventListener("scroll",function(){
+
+let nav=document.getElementById("navbar");
+
+if(window.scrollY>50){
+nav.classList.add("scrolled");
+}else{
+nav.classList.remove("scrolled");
+}
+
+})
+
+/* FAQ Toggle */
+
+let faq=document.querySelectorAll(".faq-question");
+
+faq.forEach(q=>{
+
+q.addEventListener("click",()=>{
+
+let answer=q.nextElementSibling;
+
+answer.style.display=
+answer.style.display==="block" ? "none":"block";
+
+})
+
+})
+
+</script>
+
+</body>
+</html>
