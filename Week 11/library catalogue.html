@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<!-- saved from url=(0174)file:///C:/Users/Lenovo/AppData/Local/Packages/5319275A.WhatsAppDesktop_cv1g1gvanyjgm/LocalState/sessions/1CC7DD6263097B9E31CB2C2AA6E19CB97A1FE5E6/transfers/2026-14/dddd.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>Library Book Catalogue</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#4facfe,#00f2fe);
+    text-align:center;
+    margin:0;
+    padding:0;
+}
+
+.container{
+    width:60%;
+    margin:40px auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1{
+    color:#333;
+}
+
+input{
+    padding:10px;
+    margin:8px;
+    border-radius:5px;
+    border:1px solid #ccc;
+    width:200px;
+}
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    background:#4facfe;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#0077ff;
+}
+
+table{
+    width:100%;
+    margin-top:20px;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+}
+
+th{
+    background:#4facfe;
+    color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>?? Library Book Catalogue</h1>
+
+<input type="text" id="title" placeholder="Enter Book Title">
+<input type="text" id="author" placeholder="Enter Author">
+<br>
+
+<button onclick="addBook()">Add Book</button>
+<button onclick="searchBook()">Search Book</button>
+<button onclick="removeBook()">Remove Book</button>
+<button onclick="displayBooks()">Display Books</button>
+
+<table id="bookTable">
+<tbody><tr>
+<th>Title</th>
+<th>Author</th>
+</tr>
+</tbody></table>
+
+</div>
+
+<script>
+
+const MAX_BOOKS = 10;
+let library = [];
+let count = 0;
+
+function addBook(){
+
+let title = document.getElementById("title").value;
+let author = document.getElementById("author").value;
+
+if(title=="" || author==""){
+alert("Please enter title and author");
+return;
+}
+
+if(count >= MAX_BOOKS){
+alert("Library capacity reached!");
+return;
+}
+
+library[count] = {title:title,author:author};
+count++;
+
+alert("Book Added Successfully ??");
+}
+
+function searchBook(){
+
+let title = document.getElementById("title").value;
+
+for(let i=0;i<count;i++){
+if(library[i].title === title){
+alert("Book Found ?\nTitle: "+library[i].title+"\nAuthor: "+library[i].author);
+return;
+}
+}
+
+alert("Book not found ?");
+}
+
+function removeBook(){
+
+let title = document.getElementById("title").value;
+
+for(let i=0;i<count;i++){
+
+if(library[i].title === title){
+
+for(let j=i;j<count-1;j++){
+library[j] = library[j+1];
+}
+
+count--;
+alert("Book Removed ???");
+displayBooks();
+return;
+}
+}
+
+alert("Book not found");
+}
+
+function displayBooks(){
+
+let table = document.getElementById("bookTable");
+
+table.innerHTML = `
+<tr>
+<th>Title</th>
+<th>Author</th>
+</tr>
+`;
+
+for(let i=0;i<count;i++){
+
+let row = table.insertRow();
+
+row.insertCell(0).innerHTML = library[i].title;
+row.insertCell(1).innerHTML = library[i].author;
+
+}
+
+}
+
+</script>
+
+
+</body></html>
