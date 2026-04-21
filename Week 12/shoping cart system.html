@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shopping Cart</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f5f5f5;
+        }
+
+        input {
+            margin: 5px;
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        th {
+            background: #333;
+            color: white;
+        }
+    </style>
+
+</head>
+<body>
+
+<h1>🛒 Shopping Cart System</h1>
+
+<div class="form">
+    <input type="number" id="id" placeholder="Item ID">
+    <input type="text" id="name" placeholder="Item Name">
+    <input type="number" id="price" placeholder="Price">
+    <input type="number" id="quantity" placeholder="Quantity">
+
+    <button onclick="addAtBeginning()">Add at Beginning</button>
+    <button onclick="addAtEnd()">Add at End</button>
+</div>
+
+<div class="actions">
+    <input type="number" id="deleteId" placeholder="Enter ID to Delete">
+    <button onclick="deleteItem()">Delete Item</button>
+    <button onclick="displayCart()">Display Cart</button>
+    <button onclick="totalPrice()">Total Price</button>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Qty</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody id="cartTable"></tbody>
+</table>
+
+<h2 id="total"></h2>
+
+<script>
+let cart = [];
+
+// Check duplicate
+function findItem(id) {
+    return cart.find(item => item.id == id);
+}
+
+function getInput() {
+    return {
+        id: document.getElementById("id").value,
+        name: document.getElementById("name").value,
+        price: parseFloat(document.getElementById("price").value),
+        quantity: parseInt(document.getElementById("quantity").value)
+    };
+}
+
+// Add at beginning
+function addAtBeginning() {
+    let item = getInput();
+
+    let existing = findItem(item.id);
+    if (existing) {
+        existing.quantity += item.quantity;
+        alert("Item exists! Quantity updated.");
+        return;
+    }
+
+    cart.unshift(item);
+    displayCart();
+}
+
+// Add at end
+function addAtEnd() {
+    let item = getInput();
+
+    let existing = findItem(item.id);
+    if (existing) {
+        existing.quantity += item.quantity;
+        alert("Item exists! Quantity updated.");
+        return;
+    }
+
+    cart.push(item);
+    displayCart();
+}
+
+// Delete item
+function deleteItem() {
+    let id = document.getElementById("deleteId").value;
+
+    let index = cart.findIndex(item => item.id == id);
+
+    if (index === -1) {
+        alert("Item not found!");
+        return;
+    }
+
+    cart.splice(index, 1);
+    displayCart();
+}
+
+// Display cart
+function displayCart() {
+    let table = document.getElementById("cartTable");
+
+    table.innerHTML = "";
+
+    if (cart.length === 0) {
+        table.innerHTML = "<tr><td colspan='5'>Cart is Empty</td></tr>";
+        return;
+    }
+
+    cart.forEach(item => {
+        let row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.name}</td>
+            <td>${item.price}</td>
+            <td>${item.quantity}</td>
+            <td>${item.price * item.quantity}</td>
+        `;
+
+        table.appendChild(row);
+    });
+}
+
+// Total price
+function totalPrice() {
+    let total = 0;
+
+    cart.forEach(item => {
+        total += item.price * item.quantity;
+    });
+
+    document.getElementById("total").innerText =
+        "Total Price = ₹ " + total;
+}
+</script>
+
+</body>
+</html>

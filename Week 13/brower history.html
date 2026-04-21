@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Browser History Simulator</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .container {
+            width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 10px;
+        }
+
+        input {
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .visit { background: #22c55e; }
+        .back { background: #3b82f6; }
+        .forward { background: #f59e0b; }
+
+        .history {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .box {
+            background: #334155;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🌐 Browser History Navigation</h1>
+
+<div class="container">
+    <input type="text" id="url" placeholder="Enter URL">
+
+    <br>
+    <button class="visit" onclick="visitPage()">Visit</button>
+    <button class="back" onclick="goBack()">Back</button>
+    <button class="forward" onclick="goForward()">Forward</button>
+
+    <h3>Current Page:</h3>
+    <div id="current" class="box">None</div>
+
+    <div class="history">
+        <h3>Back Stack</h3>
+        <div id="backStack"></div>
+
+        <h3>Forward Stack</h3>
+        <div id="forwardStack"></div>
+    </div>
+</div>
+
+<script>
+    let backStack = [];
+    let forwardStack = [];
+    let currentPage = null;
+
+    function visitPage() {
+    let url = document.getElementById("url").value;
+
+    if (!url) return alert("Enter URL");
+
+    if (!url.startsWith("http")) {
+        url = "https://" + url;
+    }
+
+    if (currentPage) {
+        backStack.push(currentPage);
+    }
+
+    currentPage = url;
+    forwardStack = [];
+
+    // 👉 OPEN WEBSITE
+    window.open(url, "_blank");
+
+    updateUI();
+}
+
+    function goBack() {
+        if (backStack.length === 0) {
+            alert("No Back History");
+            return;
+        }
+
+        forwardStack.push(currentPage);
+        currentPage = backStack.pop();
+
+        updateUI();
+    }
+
+    function goForward() {
+        if (forwardStack.length === 0) {
+            alert("No Forward History");
+            return;
+        }
+
+        backStack.push(currentPage);
+        currentPage = forwardStack.pop();
+
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById("current").innerText = currentPage || "None";
+
+        document.getElementById("backStack").innerHTML =
+            backStack.slice().reverse().map(p => `<div class="box">${p}</div>`).join("");
+
+        document.getElementById("forwardStack").innerHTML =
+            forwardStack.slice().reverse().map(p => `<div class="box">${p}</div>`).join("");
+    }
+</script>
+
+</body>
+</html>
