@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contact Book</title>
+
+<style>
+    body {
+        font-family: Arial;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    h1 {
+        margin-top: 20px;
+    }
+
+    .container {
+        margin: 20px auto;
+        padding: 20px;
+        width: 60%;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    input {
+        padding: 10px;
+        margin: 5px;
+        width: 200px;
+        border: none;
+        border-radius: 8px;
+        outline: none;
+    }
+
+    button {
+        padding: 10px;
+        margin: 5px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #ff7eb3;
+        color: white;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #ff4f8b;
+        transform: scale(1.05);
+    }
+
+    table {
+        margin: 20px auto;
+        border-collapse: collapse;
+        width: 70%;
+        background: white;
+        color: black;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    th {
+        background: #333;
+        color: white;
+    }
+
+    th, td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+
+</style>
+</head>
+
+<body>
+
+<h1>📞 Contact Book System</h1>
+
+<div class="container">
+    <input type="text" id="name" placeholder="Name">
+    <input type="text" id="phone" placeholder="Phone Number">
+    <input type="email" id="email" placeholder="Email">
+
+    <div>
+        <button onclick="addContact()">Add</button>
+        <button onclick="displayContacts()">Display</button>
+        <button onclick="sortContacts()">Sort</button>
+        <button onclick="searchContact()">Search</button>
+        <button onclick="updateContact()">Update</button>
+        <button onclick="deleteContact()">Delete</button>
+    </div>
+</div>
+
+<h2>Contacts</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody id="contactTable"></tbody>
+</table>
+
+<script>
+let contacts = [];
+const MAX = 100;
+
+// Add Contact
+function addContact() {
+    if (contacts.length >= MAX) {
+        alert("Contact list is full!");
+        return;
+    }
+
+    let name = document.getElementById("name").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    let email = document.getElementById("email").value.trim();
+
+    if (!name || !phone || !email) {
+        alert("Fill all fields!");
+        return;
+    }
+
+    contacts.push({ name, phone, email });
+    alert("Contact added!");
+    clearInputs();
+}
+
+// Display Contacts
+function displayContacts() {
+    let table = document.getElementById("contactTable");
+    table.innerHTML = "";
+
+    if (contacts.length === 0) {
+        table.innerHTML = "<tr><td colspan='3'>No contacts found</td></tr>";
+        return;
+    }
+
+    contacts.forEach(c => {
+        table.innerHTML += `
+        <tr>
+            <td>${c.name}</td>
+            <td>${c.phone}</td>
+            <td>${c.email}</td>
+        </tr>`;
+    });
+}
+
+// Sort (Bubble Sort)
+function sortContacts() {
+    for (let i = 0; i < contacts.length - 1; i++) {
+        for (let j = 0; j < contacts.length - i - 1; j++) {
+            if (contacts[j].name.toLowerCase() > contacts[j + 1].name.toLowerCase()) {
+                let temp = contacts[j];
+                contacts[j] = contacts[j + 1];
+                contacts[j + 1] = temp;
+            }
+        }
+    }
+    alert("Sorted!");
+    displayContacts();
+}
+
+// Binary Search
+function binarySearch(name) {
+    let low = 0, high = contacts.length - 1;
+
+    while (low <= high) {
+        let mid = Math.floor((low + high) / 2);
+        let midName = contacts[mid].name.toLowerCase();
+
+        if (midName === name.toLowerCase()) return mid;
+        else if (midName < name.toLowerCase()) low = mid + 1;
+        else high = mid - 1;
+    }
+    return -1;
+}
+
+// Search
+function searchContact() {
+    if (contacts.length === 0) {
+        alert("No contacts!");
+        return;
+    }
+
+    let name = prompt("Enter name:");
+    sortContacts();
+
+    let index = binarySearch(name);
+
+    if (index === -1) {
+        alert("Not found!");
+    } else {
+        alert(`Found: ${contacts[index].name}, ${contacts[index].phone}, ${contacts[index].email}`);
+    }
+}
+
+// Update
+function updateContact() {
+    let name = prompt("Enter name to update:");
+    let index = contacts.findIndex(c => c.name.toLowerCase() === name.toLowerCase());
+
+    if (index === -1) {
+        alert("Not found!");
+        return;
+    }
+
+    contacts[index].phone = prompt("New phone:", contacts[index].phone);
+    contacts[index].email = prompt("New email:", contacts[index].email);
+
+    alert("Updated!");
+    displayContacts();
+}
+
+// Delete
+function deleteContact() {
+    let name = prompt("Enter name to delete:");
+    let index = contacts.findIndex(c => c.name.toLowerCase() === name.toLowerCase());
+
+    if (index === -1) {
+        alert("Not found!");
+        return;
+    }
+
+    contacts.splice(index, 1);
+    alert("Deleted!");
+    displayContacts();
+}
+
+// Clear inputs
+function clearInputs() {
+    document.getElementById("name").value = "";
+    document.getElementById("phone").value = "";
+    document.getElementById("email").value = "";
+}
+</script>
+
+</body>
+</html>

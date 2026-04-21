@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Binary Tree File System</title>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: linear-gradient(135deg, #4facfe, #00f2fe); /* NEW BG */
+    color: black; /* changed for visibility */
+}
+
+input, button, select {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    cursor: pointer;
+    background: #333;
+    color: white;
+}
+
+button:hover {
+    background: #555;
+}
+
+#tree {
+    text-align: left;
+    margin-top: 20px;
+    white-space: pre;
+    font-family: monospace;
+    background: rgba(255,255,255,0.7);
+    padding: 10px;
+    border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🌳 File System (Binary Tree)</h2>
+
+<input id="name" placeholder="Directory Name">
+<input id="parent" placeholder="Parent Name">
+<select id="side">
+    <option value="left">Left</option>
+    <option value="right">Right</option>
+</select>
+
+<br>
+
+<button onclick="createRoot()">Create Root</button>
+<button onclick="insertNode()">Insert</button>
+<button onclick="deleteNode()">Delete</button>
+<button onclick="searchNode()">Search</button>
+<button onclick="showStats()">Stats</button>
+
+<div id="output"></div>
+<div id="tree"></div>
+
+<script>
+// Node structure
+class Node {
+    constructor(name) {
+        this.name = name;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+let root = null;
+
+// Create root
+function createRoot() {
+    let name = document.getElementById("name").value;
+    if (!name) return alert("Enter name");
+
+    if (root) return alert("Root already exists");
+
+    root = new Node(name);
+    display();
+}
+
+// Find node
+function find(node, name) {
+    if (!node) return null;
+    if (node.name === name) return node;
+
+    return find(node.left, name) || find(node.right, name);
+}
+
+// Check duplicate
+function exists(node, name) {
+    return find(node, name) != null;
+}
+
+// Insert
+function insertNode() {
+    let name = document.getElementById("name").value;
+    let parent = document.getElementById("parent").value;
+    let side = document.getElementById("side").value;
+
+    if (!root) return alert("Create root first");
+    if (!name || !parent) return alert("Enter values");
+    if (exists(root, name)) return alert("Duplicate not allowed");
+
+    let p = find(root, parent);
+    if (!p) return alert("Parent not found");
+
+    if (side === "left") {
+        if (p.left) return alert("Left already filled");
+        p.left = new Node(name);
+    } else {
+        if (p.right) return alert("Right already filled");
+        p.right = new Node(name);
+    }
+
+    display();
+}
+
+// Delete node
+function deleteNode() {
+    let name = document.getElementById("name").value;
+
+    if (!root) return alert("Tree empty");
+
+    if (root.name === name) {
+        root = null;
+        display();
+        return;
+    }
+
+    function remove(parent) {
+        if (!parent) return false;
+
+        if (parent.left && parent.left.name === name) {
+            parent.left = null;
+            return true;
+        }
+        if (parent.right && parent.right.name === name) {
+            parent.right = null;
+            return true;
+        }
+
+        return remove(parent.left) || remove(parent.right);
+    }
+
+    if (!remove(root)) alert("Not found");
+
+    display();
+}
+
+// Search with path
+function searchNode() {
+    let name = document.getElementById("name").value;
+    let path = [];
+
+    function dfs(node) {
+        if (!node) return false;
+
+        path.push(node.name);
+
+        if (node.name === name) return true;
+
+        if (dfs(node.left) || dfs(node.right)) return true;
+
+        path.pop();
+        return false;
+    }
+
+    if (dfs(root)) {
+        output.innerText = "Path: " + path.join(" -> ");
+    } else {
+        output.innerText = "Not found";
+    }
+}
+
+// Count nodes
+function count(node) {
+    if (!node) return 0;
+    return 1 + count(node.left) + count(node.right);
+}
+
+// Height
+function height(node) {
+    if (!node) return 0;
+    return 1 + Math.max(height(node.left), height(node.right));
+}
+
+// Stats
+function showStats() {
+    output.innerText = "Total: " + count(root) + " | Height: " + height(root);
+}
+
+// Display tree
+function printTree(node, space = 0) {
+    if (!node) return "";
+
+    let result = "";
+    result += " ".repeat(space * 4) + "📁 " + node.name + "\n";
+    result += printTree(node.left, space + 1);
+    result += printTree(node.right, space + 1);
+
+    return result;
+}
+
+function display() {
+    document.getElementById("tree").innerText = printTree(root);
+}
+</script>
+
+</body>
+</html>

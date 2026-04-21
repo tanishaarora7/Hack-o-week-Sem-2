@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bank ATM Circular Queue System</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --panel: #0f1629;
+    --border: #1e3a5f;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #39ff14;
+    --text: #c8e0ff;
+    --muted: #4a6080;
+    --full: #ff3860;
+    --empty-slot: #1a2a40;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(0,212,255,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(255,107,53,0.05) 0%, transparent 60%);
+  }
+
+  .scanlines {
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none; z-index: 1000;
+  }
+
+  header {
+    text-align: center;
+    padding: 28px 16px 14px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 260px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(20px, 4vw, 34px);
+    font-weight: 900;
+    letter-spacing: 5px;
+    background: linear-gradient(135deg, var(--accent), #ffffff, var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    font-size: 11px; color: var(--muted); letter-spacing: 3px; margin-top: 6px;
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    padding: 24px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media(max-width: 780px) {
+    .main { grid-template-columns: 1fr; }
+  }
+
+  /* ---- QUEUE VISUAL PANEL ---- */
+  .queue-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .queue-panel::before {
+    content:''; position:absolute; top:-1px; left:20px; right:20px; height:2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .panel-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px; letter-spacing: 3px;
+    color: var(--accent); margin-bottom: 22px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel-title::before { content:'■'; }
+
+  .circle-wrapper {
+    position: relative;
+    width: 340px; height: 340px;
+    margin: 0 auto 20px;
+  }
+  #queueCanvas { width: 100%; height: 100%; }
+
+  .center-info {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none;
+  }
+  .center-count {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 42px; font-weight: 900;
+    color: var(--accent); line-height: 1;
+    text-shadow: 0 0 20px rgba(0,212,255,0.6);
+  }
+  .center-label { font-size: 10px; color: var(--muted); letter-spacing: 2px; margin-top: 4px; }
+  .center-cap { font-size: 12px; color: #3a5a7a; margin-top: 2px; }
+
+  .status-bar {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 18px;
+  }
+  .stat {
+    background: #0a1020; border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; text-align: center;
+  }
+  .stat-val { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 700; }
+  .stat-label { font-size: 9px; color: var(--muted); letter-spacing: 1px; margin-top: 3px; }
+  .stat-val.blue  { color: var(--accent); text-shadow: 0 0 10px rgba(0,212,255,0.5); }
+  .stat-val.orange{ color: var(--accent2); text-shadow: 0 0 10px rgba(255,107,53,0.5); }
+  .stat-val.green { color: var(--accent3); text-shadow: 0 0 10px rgba(57,255,20,0.5); }
+
+  .pointers {
+    display: flex; gap: 20px; justify-content: center;
+    margin: 12px 0 0; flex-wrap: wrap;
+  }
+  .ptr { font-size: 10px; display: flex; align-items: center; gap: 6px; }
+  .ptr-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .state-badge {
+    text-align: center; padding: 10px;
+    font-family: 'Orbitron', sans-serif; font-size: 12px; letter-spacing: 2px;
+    border-radius: 8px; margin-top: 14px; font-weight: 700; transition: all 0.3s;
+  }
+  .state-badge.ok    { background: rgba(57,255,20,0.1); color: var(--accent3); border: 1px solid rgba(57,255,20,0.3); }
+  .state-badge.full  { background: rgba(255,56,96,0.15); color: var(--full); border: 1px solid rgba(255,56,96,0.4); animation: pulse 1s infinite; }
+  .state-badge.empty { background: rgba(0,212,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255,56,96,0); }
+    50% { box-shadow: 0 0 16px 4px rgba(255,56,96,0.3); }
+  }
+
+  /* ---- SIDE PANEL ---- */
+  .side { display: flex; flex-direction: column; gap: 16px; }
+
+  .control-panel, .log-panel, .info-panel {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px; position: relative; overflow: hidden;
+  }
+  .control-panel::before {
+    content:''; position:absolute; top:-1px; left:20px; right:20px; height:2px;
+    background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+  }
+  .log-panel::before {
+    content:''; position:absolute; top:-1px; left:20px; right:20px; height:2px;
+    background: linear-gradient(90deg, transparent, var(--accent3), transparent);
+  }
+  .info-panel::before {
+    content:''; position:absolute; top:-1px; left:20px; right:20px; height:2px;
+    background: linear-gradient(90deg, transparent, #9933cc, transparent);
+  }
+
+  .desc {
+    font-size: 10px; color: var(--muted); line-height: 1.9; margin-top: 4px;
+  }
+
+  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+
+  .btn {
+    font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 1px;
+    padding: 13px 8px; border: none; border-radius: 8px; cursor: pointer;
+    font-weight: 700; transition: all 0.15s; position: relative; overflow: hidden;
+  }
+  .btn::after {
+    content:''; position:absolute; inset:0;
+    background: rgba(255,255,255,0.1); opacity: 0; transition: opacity 0.15s;
+  }
+  .btn:hover::after { opacity: 1; }
+  .btn:active { transform: scale(0.96); }
+
+  .btn-enqueue { background: linear-gradient(135deg,#0055aa,var(--accent)); color:#fff; box-shadow:0 0 14px rgba(0,212,255,0.25); }
+  .btn-dequeue { background: linear-gradient(135deg,#aa3300,var(--accent2)); color:#fff; box-shadow:0 0 14px rgba(255,107,53,0.25); }
+  .btn-peak    { background: linear-gradient(135deg,#004422,var(--accent3)); color:#000; box-shadow:0 0 14px rgba(57,255,20,0.2); }
+  .btn-reset   { background: linear-gradient(135deg,#220033,#9933cc); color:#fff; }
+  .btn-fill    { grid-column:1/-1; background: linear-gradient(135deg,#1a0a2e,#7722cc); color:#fff; margin-top:4px; }
+
+  .peak-badge {
+    display: inline-block; font-size: 9px; letter-spacing: 2px;
+    padding: 2px 10px; border-radius: 20px;
+    background: rgba(255,107,53,0.15); color: var(--accent2);
+    border: 1px solid rgba(255,107,53,0.4); margin-left: 8px;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* Log */
+  .log-list {
+    margin-top: 12px; max-height: 200px; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  }
+  .log-entry {
+    font-size: 10px; padding: 5px 8px; border-radius: 4px;
+    margin-bottom: 4px; border-left: 3px solid;
+    background: rgba(255,255,255,0.02);
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:none} }
+  .log-entry.enqueue { border-color:var(--accent); color:#90d0ff; }
+  .log-entry.dequeue { border-color:var(--accent2); color:#ffb090; }
+  .log-entry.error   { border-color:var(--full); color:#ff8090; }
+  .log-entry.info    { border-color:var(--accent3); color:#90ffa0; }
+
+  /* Info section */
+  .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .info-item {
+    background:#0a1020; border:1px solid var(--border); border-radius:6px;
+    padding:8px 10px;
+  }
+  .info-key { font-size:8px; color:var(--muted); letter-spacing:1px; }
+  .info-val { font-size:11px; color:var(--accent); margin-top:3px; font-family:'Orbitron',sans-serif; }
+
+  /* Complexity badge */
+  .complexity {
+    display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;
+  }
+  .badge {
+    font-size:9px; padding:3px 8px; border-radius:20px; letter-spacing:1px;
+    border:1px solid; font-family:'Orbitron',sans-serif;
+  }
+  .badge.o1 { border-color:var(--accent3); color:var(--accent3); background:rgba(57,255,20,0.08); }
+  .badge.on { border-color:var(--accent2); color:var(--accent2); background:rgba(255,107,53,0.08); }
+
+  footer {
+    text-align:center; padding:16px; font-size:10px; color:var(--muted);
+    border-top:1px solid var(--border); letter-spacing:2px; margin-top:10px;
+  }
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+
+<header>
+  <div class="title">ATM QUEUE SYSTEM</div>
+  <div class="subtitle">CIRCULAR BUFFER &nbsp;·&nbsp; BANK SIMULATION &nbsp;·&nbsp; REAL-TIME MONITOR</div>
+</header>
+
+<div class="main">
+
+  <!-- LEFT: Circular Queue Visual -->
+  <div class="queue-panel">
+    <div class="panel-title">
+      CIRCULAR QUEUE VISUALIZER
+      <span id="peakBadge" class="peak-badge" style="display:none">⚡ PEAK HOURS</span>
+    </div>
+
+    <div class="circle-wrapper">
+      <canvas id="queueCanvas" width="340" height="340"></canvas>
+      <div class="center-info">
+        <div class="center-count" id="centerCount">0</div>
+        <div class="center-label">IN QUEUE</div>
+        <div class="center-cap" id="centerCap">OF 8 SLOTS</div>
+      </div>
+    </div>
+
+    <div class="pointers">
+      <div class="ptr"><div class="ptr-dot" style="background:#00d4ff;box-shadow:0 0 6px #00d4ff"></div> FRONT (HEAD)</div>
+      <div class="ptr"><div class="ptr-dot" style="background:#ff6b35;box-shadow:0 0 6px #ff6b35"></div> REAR (TAIL)</div>
+      <div class="ptr"><div class="ptr-dot" style="background:#39ff14;box-shadow:0 0 6px #39ff14"></div> OCCUPIED SLOT</div>
+    </div>
+
+    <div id="stateBadge" class="state-badge empty">QUEUE EMPTY — AWAITING CUSTOMERS</div>
+
+    <div class="status-bar">
+      <div class="stat">
+        <div class="stat-val blue" id="frontIdx">—</div>
+        <div class="stat-label">FRONT PTR</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val orange" id="rearIdx">—</div>
+        <div class="stat-label">REAR PTR</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val green" id="sizeDisp">0 / 8</div>
+        <div class="stat-label">CAPACITY</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Controls + Log + Info -->
+  <div class="side">
+
+    <div class="control-panel">
+      <div class="panel-title">QUEUE OPERATIONS</div>
+      <div class="desc">
+        Circular queue reuses freed memory slots via modulo arithmetic.<br>
+        Rear enqueues, Front dequeues. Wrap-around prevents wasted space.
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-enqueue" onclick="enqueue()">
+          ▶ ENQUEUE<br><span style="font-size:8px;font-weight:400;opacity:.8">ADD CUSTOMER</span>
+        </button>
+        <button class="btn btn-dequeue" onclick="dequeue()">
+          ◀ DEQUEUE<br><span style="font-size:8px;font-weight:400;opacity:.8">SERVE CUSTOMER</span>
+        </button>
+        <button class="btn btn-peak" onclick="togglePeak()">
+          ⚡ PEAK MODE<br><span style="font-size:8px;font-weight:400;opacity:.8">AUTO SIMULATE</span>
+        </button>
+        <button class="btn btn-reset" onclick="resetQueue()">
+          ↺ RESET<br><span style="font-size:8px;font-weight:400;opacity:.8">CLEAR ALL</span>
+        </button>
+        <button class="btn btn-fill" onclick="fillQueue()">
+          ▰▰▰ FILL QUEUE — TEST OVERFLOW STATE
+        </button>
+      </div>
+    </div>
+
+    <div class="log-panel">
+      <div class="panel-title">SYSTEM EVENT LOG</div>
+      <div class="log-list" id="logList">
+        <div class="log-entry info">[SYSTEM] ATM Queue initialized — 8 slots ready.</div>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <div class="panel-title">DATA STRUCTURE INFO</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-key">STRUCTURE</div>
+          <div class="info-val">CIRCULAR Q</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">CAPACITY</div>
+          <div class="info-val">8 SLOTS</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">ENQUEUE</div>
+          <div class="info-val">rear = (rear+1) % n</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">DEQUEUE</div>
+          <div class="info-val">front = (front+1) % n</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:9px;color:var(--muted);letter-spacing:1px;">TIME COMPLEXITY</div>
+      <div class="complexity">
+        <div class="badge o1">ENQUEUE · O(1)</div>
+        <div class="badge o1">DEQUEUE · O(1)</div>
+        <div class="badge o1">PEEK · O(1)</div>
+        <div class="badge on">SEARCH · O(N)</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>BANK ATM CIRCULAR QUEUE SIMULATOR &nbsp;·&nbsp; DATA STRUCTURES &amp; ALGORITHMS &nbsp;·&nbsp; HACKATHON PROJECT</footer>
+
+<script>
+  const SIZE = 8;
+  let queue = new Array(SIZE).fill(null);
+  let front = -1, rear = -1, count = 0;
+  let peakMode = false, peakInterval = null;
+  let customerIdCounter = 1001;
+  let animSlots = new Array(SIZE).fill(0);
+
+  const canvas = document.getElementById('queueCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function getSlotAngle(i) {
+    return (i / SIZE) * Math.PI * 2 - Math.PI / 2;
+  }
+
+  function drawQueue() {
+    ctx.clearRect(0, 0, 340, 340);
+    const cx = 170, cy = 170, R = 130, slotR = 28;
+
+    // Outer atmospheric glow
+    const outerGlow = ctx.createRadialGradient(cx,cy,R-15,cx,cy,R+20);
+    outerGlow.addColorStop(0,'rgba(0,212,255,0.06)');
+    outerGlow.addColorStop(1,'rgba(0,212,255,0)');
+    ctx.beginPath(); ctx.arc(cx,cy,R+10,0,Math.PI*2);
+    ctx.fillStyle=outerGlow; ctx.fill();
+
+    // Track ring
+    ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle='#1a3050'; ctx.lineWidth=2; ctx.stroke();
+
+    // Wrap-around arc (visual indicator)
+    if(count > 0 && rear !== -1 && front !== -1 && rear < front) {
+      ctx.beginPath();
+      ctx.arc(cx,cy,R-35, getSlotAngle(rear), getSlotAngle(front), false);
+      ctx.strokeStyle='rgba(255,107,53,0.15)'; ctx.lineWidth=12; ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(cx,cy,R-35, getSlotAngle(rear), getSlotAngle(front), false);
+      ctx.strokeStyle='rgba(255,107,53,0.5)'; ctx.lineWidth=2;
+      ctx.setLineDash([5,5]); ctx.stroke(); ctx.setLineDash([]);
+    }
+
+    // Draw each slot
+    for(let i = 0; i < SIZE; i++) {
+      const a = getSlotAngle(i);
+      const nx = Math.cos(a), ny = Math.sin(a);
+      const sx = cx + R*nx, sy = cy + R*ny;
+      const occupied = queue[i] !== null;
+      const isFront = (front === i && count > 0);
+      const isRear  = (rear  === i && count > 0);
+
+      // Smooth animation
+      if(occupied && animSlots[i] < 1) animSlots[i] = Math.min(1, animSlots[i]+0.1);
+      if(!occupied && animSlots[i] > 0) animSlots[i] = Math.max(0, animSlots[i]-0.1);
+
+      // Glow halo
+      if(animSlots[i] > 0) {
+        ctx.beginPath(); ctx.arc(sx,sy,slotR+6,0,Math.PI*2);
+        const halo = ctx.createRadialGradient(sx,sy,0,sx,sy,slotR+6);
+        halo.addColorStop(0,`rgba(57,255,20,${0.18*animSlots[i]})`);
+        halo.addColorStop(1,'rgba(57,255,20,0)');
+        ctx.fillStyle=halo; ctx.fill();
+      }
+
+      // Slot fill
+      ctx.beginPath(); ctx.arc(sx,sy,slotR,0,Math.PI*2);
+      if(occupied) {
+        const g = ctx.createRadialGradient(sx,sy,0,sx,sy,slotR);
+        g.addColorStop(0,`rgba(30,100,50,${animSlots[i]})`);
+        g.addColorStop(1,`rgba(10,40,20,${animSlots[i]})`);
+        ctx.fillStyle=g; ctx.fill();
+        ctx.strokeStyle=`rgba(57,255,20,${0.5+0.5*animSlots[i]})`;
+      } else {
+        ctx.fillStyle='#0a1020'; ctx.fill();
+        ctx.strokeStyle='#1e3a5f';
+      }
+      ctx.lineWidth=2; ctx.stroke();
+
+      // Slot index
+      ctx.fillStyle = occupied ? '#39ff14' : '#2a4060';
+      ctx.font = 'bold 12px Share Tech Mono';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(i, sx, sy + (occupied ? -7 : 0));
+
+      // Customer ID
+      if(occupied && queue[i]) {
+        ctx.fillStyle='rgba(200,255,220,0.75)';
+        ctx.font='7px Share Tech Mono';
+        ctx.fillText(queue[i], sx, sy+7);
+      }
+
+      // FRONT pointer arrow
+      if(isFront) {
+        ctx.save(); ctx.translate(sx,sy); ctx.rotate(a);
+        ctx.beginPath();
+        ctx.moveTo(-slotR-16,0); ctx.lineTo(-slotR-6,0);
+        ctx.strokeStyle='#00d4ff'; ctx.lineWidth=2; ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-slotR-9,-4); ctx.lineTo(-slotR-2,0); ctx.lineTo(-slotR-9,4);
+        ctx.fillStyle='#00d4ff'; ctx.fill();
+        ctx.restore();
+        ctx.fillStyle='#00d4ff';
+        ctx.font='bold 9px Orbitron, monospace';
+        ctx.fillText('F', cx+(R+45)*Math.cos(a), cy+(R+45)*Math.sin(a));
+      }
+
+      // REAR pointer arrow
+      if(isRear) {
+        const angleR = a + Math.PI;
+        const extra = isFront ? 18 : 0;
+        ctx.save(); ctx.translate(sx,sy); ctx.rotate(angleR);
+        ctx.beginPath();
+        ctx.moveTo(-slotR-16-extra,0); ctx.lineTo(-slotR-6-extra,0);
+        ctx.strokeStyle='#ff6b35'; ctx.lineWidth=2; ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-slotR-9-extra,-4); ctx.lineTo(-slotR-2-extra,0); ctx.lineTo(-slotR-9-extra,4);
+        ctx.fillStyle='#ff6b35'; ctx.fill();
+        ctx.restore();
+        ctx.fillStyle='#ff6b35';
+        ctx.font='bold 9px Orbitron, monospace';
+        const lx = isFront ? cx-(R+45)*Math.cos(a)+(extra*Math.cos(a+1.2)) : cx-(R+45)*Math.cos(a);
+        const ly = isFront ? cy-(R+45)*Math.sin(a)+(extra*Math.sin(a+1.2)) : cy-(R+45)*Math.sin(a);
+        ctx.fillText('R', lx, ly);
+      }
+    }
+
+    requestAnimationFrame(drawQueue);
+  }
+
+  function updateUI() {
+    document.getElementById('centerCount').textContent = count;
+    document.getElementById('frontIdx').textContent = front >= 0 ? front : '—';
+    document.getElementById('rearIdx').textContent  = rear  >= 0 ? rear  : '—';
+    document.getElementById('sizeDisp').textContent = count + ' / ' + SIZE;
+
+    const badge = document.getElementById('stateBadge');
+    if(count === SIZE) {
+      badge.textContent = '⚠ QUEUE FULL — NEW CUSTOMERS BLOCKED';
+      badge.className = 'state-badge full';
+    } else if(count === 0) {
+      badge.textContent = 'QUEUE EMPTY — AWAITING CUSTOMERS';
+      badge.className = 'state-badge empty';
+    } else {
+      badge.textContent = `SERVING · ${SIZE - count} FREE SLOT${SIZE - count !== 1 ? 'S' : ''}`;
+      badge.className = 'state-badge ok';
+    }
+  }
+
+  function log(msg, type='info') {
+    const list = document.getElementById('logList');
+    const ts = new Date().toLocaleTimeString('en-US', {hour12:false, hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const el = document.createElement('div');
+    el.className = `log-entry ${type}`;
+    el.textContent = `[${ts}] ${msg}`;
+    list.prepend(el);
+    if(list.children.length > 50) list.lastChild.remove();
+  }
+
+  function enqueue() {
+    if(count === SIZE) {
+      log('⚠ QUEUE FULL — Customer turned away! No space available.', 'error');
+      return;
+    }
+    if(front === -1) { front = 0; rear = 0; }
+    else rear = (rear + 1) % SIZE;
+    const id = 'C-' + customerIdCounter++;
+    queue[rear] = id;
+    count++;
+    log(`▶ ENQUEUE → Slot[${rear}] | Customer ${id} joined the queue`, 'enqueue');
+    updateUI();
+  }
+
+  function dequeue() {
+    if(count === 0) {
+      log('⚠ QUEUE EMPTY — No customers waiting. Nothing to serve!', 'error');
+      return;
+    }
+    const id = queue[front];
+    log(`◀ DEQUEUE ← Slot[${front}] | Customer ${id} served at ATM`, 'dequeue');
+    queue[front] = null;
+    if(count === 1) { front = -1; rear = -1; }
+    else front = (front + 1) % SIZE;
+    count--;
+    updateUI();
+  }
+
+  function fillQueue() {
+    const needed = SIZE - count;
+    if(needed === 0) { log('⚠ Already full — can\'t fill further.', 'error'); return; }
+    for(let i = 0; i < needed; i++) enqueue();
+    log(`▰▰▰ STRESS TEST — Filled ${needed} remaining slot(s)`, 'info');
+  }
+
+  function resetQueue() {
+    queue = new Array(SIZE).fill(null);
+    front = -1; rear = -1; count = 0;
+    animSlots = new Array(SIZE).fill(0);
+    log('↺ SYSTEM RESET — All slots cleared, queue initialized', 'info');
+    updateUI();
+  }
+
+  function togglePeak() {
+    peakMode = !peakMode;
+    document.getElementById('peakBadge').style.display = peakMode ? 'inline-block' : 'none';
+    if(peakMode) {
+      log('⚡ PEAK HOURS ACTIVATED — High traffic simulation started', 'info');
+      peakInterval = setInterval(() => {
+        const r = Math.random();
+        if(r < 0.65) { if(count < SIZE) enqueue(); }
+        else          { if(count > 0)   dequeue(); }
+      }, 900);
+    } else {
+      clearInterval(peakInterval);
+      log('⚡ PEAK HOURS ENDED — Returning to manual mode', 'info');
+    }
+  }
+
+  updateUI();
+  drawQueue();
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeList | Doubly Linked Shuffle</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent: #38bdf8;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top right, #1e293b, var(--bg));
+            color: var(--text);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glass-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 { text-align: center; color: var(--accent); margin-bottom: 1.5rem; }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            outline: none;
+        }
+
+        button {
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: bold;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        button:hover { transform: scale(1.05); opacity: 0.9; }
+        .btn-alt { background: #f472b6; }
+        .btn-shuffle { background: #fbbf24; width: 100%; margin-top: 10px; }
+
+        #playlist-ui {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .song-node {
+            background: rgba(255, 255, 255, 0.08);
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .delete-btn {
+            color: #ef4444;
+            background: none;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="glass-container">
+    <h2>KA GOAT</h2>
+    
+    <div class="input-group">
+        <input type="text" id="songInput" placeholder="Enter song name...">
+    </div>
+    
+    <div class="input-group">
+        <button onclick="addSong('front')">Add Start</button>
+        <button onclick="addSong('end')">Add End</button>
+    </div>
+
+    <button class="btn-shuffle" onclick="reverseShuffle()">🔀 Reverse Shuffle Mode</button>
+
+    <ul id="playlist-ui">
+        </ul>
+</div>
+
+<script>
+    // --- Doubly Linked List Logic ---
+    class Node {
+        constructor(title) {
+            this.title = title;
+            this.next = null;
+            this.prev = null;
+        }
+    }
+
+    class DoublyLinkedList {
+        constructor() {
+            this.head = null;
+            this.tail = null;
+            this.size = 0;
+        }
+
+        addFront(title) {
+            const newNode = new Node(title);
+            if (!this.head) {
+                this.head = this.tail = newNode;
+            } else {
+                newNode.next = this.head;
+                this.head.prev = newNode;
+                this.head = newNode;
+            }
+            this.size++;
+        }
+
+        addEnd(title) {
+            const newNode = new Node(title);
+            if (!this.tail) {
+                this.head = this.tail = newNode;
+            } else {
+                newNode.prev = this.tail;
+                this.tail.next = newNode;
+                this.tail = newNode;
+            }
+            this.size++;
+        }
+
+        deleteAt(index) {
+            if (index < 0 || index >= this.size) return;
+            let current = this.head;
+
+            if (index === 0) {
+                this.head = current.next;
+                if (this.head) this.head.prev = null;
+                else this.tail = null;
+            } else if (index === this.size - 1) {
+                current = this.tail;
+                this.tail = current.prev;
+                this.tail.next = null;
+            } else {
+                for (let i = 0; i < index; i++) current = current.next;
+                current.prev.next = current.next;
+                current.next.prev = current.prev;
+            }
+            this.size--;
+        }
+
+        reverse() {
+            let current = this.head;
+            let temp = null;
+            this.tail = this.head;
+            while (current) {
+                temp = current.prev;
+                current.prev = current.next;
+                current.next = temp;
+                this.head = current;
+                current = current.prev;
+            }
+        }
+    }
+
+    // --- App Controller ---
+    const playlist = new DoublyLinkedList();
+    const songInput = document.getElementById('songInput');
+    const playlistUI = document.getElementById('playlist-ui');
+
+    function render() {
+        playlistUI.innerHTML = '';
+        let current = playlist.head;
+        let index = 0;
+        while (current) {
+            const li = document.createElement('li');
+            li.className = 'song-node';
+            li.innerHTML = `
+                <span>🎵 ${current.title}</span>
+                <button class="delete-btn" onclick="removeSong(${index})">×</button>
+            `;
+            playlistUI.appendChild(li);
+            current = current.next;
+            index++;
+        }
+    }
+
+    function addSong(pos) {
+        const title = songInput.value.trim();
+        if (!title) return alert("Enter a song!");
+        pos === 'front' ? playlist.addFront(title) : playlist.addEnd(title);
+        songInput.value = '';
+        render();
+    }
+
+    function removeSong(index) {
+        playlist.deleteAt(index);
+        render();
+    }
+
+    function reverseShuffle() {
+        playlist.reverse();
+        render();
+    }
+</script>
+</body>
+</html>

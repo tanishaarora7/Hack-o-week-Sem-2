@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Task Manager</title>
+
+<style>
+body {
+    font-family: 'Segoe UI';
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0;
+    color: white;
+}
+
+.container {
+    width: 500px;
+    margin: 40px auto;
+    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+}
+
+h1 {
+    text-align: center;
+}
+
+input, select {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.add { background: #00c9a7; }
+.undo { background: orange; }
+.redo { background: #00bcd4; }
+
+.task {
+    background: rgba(0,0,0,0.3);
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1;}
+}
+
+.low { border-left: 5px solid green; }
+.medium { border-left: 5px solid yellow; }
+.high { border-left: 5px solid red; }
+
+.progress {
+    margin-top: 10px;
+    height: 10px;
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.bar {
+    height: 10px;
+    background: lime;
+    border-radius: 10px;
+}
+
+.history {
+    margin-top: 20px;
+    font-size: 12px;
+    max-height: 100px;
+    overflow-y: auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🚀 Smart Task Manager</h1>
+
+<input type="text" id="taskInput" placeholder="Enter task">
+<select id="priority">
+    <option value="low">Low</option>
+    <option value="medium">Medium</option>
+    <option value="high">High</option>
+</select>
+
+<button class="add" onclick="addTask()">Add</button>
+<button class="undo" onclick="undo()">Undo</button>
+<button class="redo" onclick="redo()">Redo</button>
+
+<br>
+<input type="text" id="search" placeholder="Search..." onkeyup="render()">
+
+<div id="taskList"></div>
+
+<div class="progress">
+    <div class="bar" id="progressBar"></div>
+</div>
+
+<div class="history" id="history"></div>
+
+</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let undoStack = [];
+let redoStack = [];
+
+function save() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function render() {
+    let list = document.getElementById("taskList");
+    let search = document.getElementById("search").value.toLowerCase();
+    list.innerHTML = "";
+
+    let completed = 0;
+
+    tasks.forEach((t, i) => {
+        if (!t.text.toLowerCase().includes(search)) return;
+
+        if (t.done) completed++;
+
+        let div = document.createElement("div");
+        div.className = `task ${t.priority}`;
+
+        div.innerHTML = `
+            <span onclick="toggleDone(${i})" style="cursor:pointer">
+                ${t.done ? "✅" : "⬜"} ${t.text}
+                <br><small>${t.time}</small>
+            </span>
+            <div>
+                <button onclick="editTask(${i})">✏️</button>
+                <button onclick="deleteTask(${i})">❌</button>
+            </div>
+        `;
+
+        list.appendChild(div);
+    });
+
+    let percent = tasks.length ? (completed / tasks.length) * 100 : 0;
+    document.getElementById("progressBar").style.width = percent + "%";
+
+    renderHistory();
+}
+
+function renderHistory() {
+    let h = document.getElementById("history");
+    h.innerHTML = "<b>Action Stack:</b><br>";
+    undoStack.slice().reverse().forEach(a => {
+        h.innerHTML += JSON.stringify(a) + "<br>";
+    });
+}
+
+function addTask() {
+    let text = taskInput.value.trim();
+    let priority = document.getElementById("priority").value;
+
+    if (!text) return alert("Enter task!");
+
+    let task = {
+        text,
+        priority,
+        done: false,
+        time: new Date().toLocaleString()
+    };
+
+    tasks.push(task);
+    undoStack.push({type:"ADD", task});
+    redoStack = [];
+
+    taskInput.value = "";
+    save(); render();
+}
+
+function deleteTask(i) {
+    let removed = tasks.splice(i,1)[0];
+    undoStack.push({type:"DELETE", task:removed, index:i});
+    redoStack = [];
+    save(); render();
+}
+
+function editTask(i) {
+    let newText = prompt("Edit:", tasks[i].text);
+    if (!newText) return;
+
+    let old = {...tasks[i]};
+    tasks[i].text = newText;
+
+    undoStack.push({type:"EDIT", old, index:i});
+    redoStack = [];
+    save(); render();
+}
+
+function toggleDone(i) {
+    tasks[i].done = !tasks[i].done;
+    save(); render();
+}
+
+function undo() {
+    if (!undoStack.length) return alert("Nothing to undo");
+
+    let a = undoStack.pop();
+    redoStack.push(a);
+
+    if (a.type==="ADD") tasks.pop();
+    else if (a.type==="DELETE") tasks.splice(a.index,0,a.task);
+    else if (a.type==="EDIT") tasks[a.index]=a.old;
+
+    save(); render();
+}
+
+function redo() {
+    if (!redoStack.length) return alert("Nothing to redo");
+
+    let a = redoStack.pop();
+    undoStack.push(a);
+
+    if (a.type==="ADD") tasks.push(a.task);
+    else if (a.type==="DELETE") tasks.splice(a.index,1);
+    else if (a.type==="EDIT") tasks[a.index]=a.old;
+
+    save(); render();
+}
+
+render();
+</script>
+
+</body>
+</html>

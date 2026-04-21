@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exam Score Tracker</title>
+  <style>
+    :root {
+      --bg1: #0f172a;
+      --bg2: #111827;
+      --card: rgba(255,255,255,0.08);
+      --card-border: rgba(255,255,255,0.12);
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent2: #a78bfa;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(56,189,248,0.18), transparent 25%),
+        radial-gradient(circle at top right, rgba(167,139,250,0.18), transparent 22%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow-x: hidden;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+    }
+
+    .container {
+      width: min(1200px, 92vw);
+      margin: 0 auto;
+      padding: 32px 0 50px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(16px);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.28);
+    }
+
+    .header {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::after {
+      content: "";
+      position: absolute;
+      inset: auto -40px -60px auto;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(56,189,248,0.35), transparent 70%);
+      filter: blur(10px);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(56,189,248,0.12);
+      border: 1px solid rgba(56,189,248,0.22);
+      color: #7dd3fc;
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.7rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 62ch;
+      line-height: 1.7;
+    }
+
+    .quick-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .mini {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .mini .label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .mini .value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .section {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1.3rem;
+    }
+
+    .card p.desc {
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.96rem;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    input, button, textarea {
+      border: none;
+      outline: none;
+      border-radius: 16px;
+      font: inherit;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(15,23,42,0.8);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #64748b;
+    }
+
+    .btn {
+      padding: 14px 18px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s ease;
+      color: #fff;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 12px 30px rgba(56,189,248,0.22);
+    }
+
+    .btn:hover { transform: translateY(-1px); }
+    .btn.secondary {
+      background: rgba(255,255,255,0.08);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .score-chip-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+      min-height: 48px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-weight: 600;
+    }
+
+    .chip button {
+      background: transparent;
+      color: #cbd5e1;
+      padding: 0;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .visuals {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .metric {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.6rem;
+    }
+
+    .chart-box {
+      padding: 24px;
+    }
+
+    .chart-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .legend {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .bars {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      height: 260px;
+      padding: 16px 10px 6px;
+      overflow-x: auto;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.55), rgba(15,23,42,0.2));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .bar-group {
+      min-width: 34px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: end;
+      height: 100%;
+    }
+
+    .bar {
+      width: 26px;
+      border-radius: 16px 16px 6px 6px;
+      background: linear-gradient(180deg, #38bdf8, #a78bfa);
+      box-shadow: 0 10px 20px rgba(56,189,248,0.15);
+      transition: 0.3s ease;
+    }
+
+    .bar:hover {
+      filter: brightness(1.08);
+      transform: scaleY(1.02);
+    }
+
+    .bar-label {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+
+    .no-data {
+      color: var(--muted);
+      text-align: center;
+      width: 100%;
+      align-self: center;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 960px) {
+      .hero, .section {
+        grid-template-columns: 1fr;
+      }
+      .metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container { width: 94vw; }
+      .metrics, .quick-stats {
+        grid-template-columns: 1fr;
+      }
+      .input-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="hero">
+      <div class="panel header">
+        <div class="badge">⚡ Hackathon Project · Exam Score Tracker</div>
+        <h1>Track scores like a live data dashboard.</h1>
+        <p class="subtitle">
+          Enter exam scores, see the array update instantly, and analyze the class performance with dynamic min, max, mode, average, median, and frequency visualization.
+        </p>
+      </div>
+      <div class="panel card">
+        <div class="quick-stats">
+          <div class="mini">
+            <div class="label">Total Students</div>
+            <div class="value" id="totalStudents">0</div>
+          </div>
+          <div class="mini">
+            <div class="label">Top Score</div>
+            <div class="value" id="topScore">0</div>
+          </div>
+          <div class="mini">
+            <div class="label">Lowest Score</div>
+            <div class="value" id="lowScore">0</div>
+          </div>
+          <div class="mini">
+            <div class="label">Most Frequent</div>
+            <div class="value" id="modeScore">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="panel card">
+        <h2>Input Scores</h2>
+        <p class="desc">Add scores one by one or paste multiple values separated by commas. The array-based frequency count updates in real time.</p>
+
+        <div class="input-row">
+          <input id="scoreInput" type="number" min="0" max="100" placeholder="Enter a score (0-100)" />
+          <button class="btn" onclick="addScore()">Add Score</button>
+        </div>
+
+        <textarea id="bulkInput" rows="4" placeholder="Paste scores like: 78, 92, 65, 92, 88"></textarea>
+
+        <div class="actions">
+          <button class="btn" onclick="addBulkScores()">Add Multiple</button>
+          <button class="btn secondary" onclick="resetAll()">Reset</button>
+          <button class="btn secondary" onclick="fillDemo()">Load Demo Data</button>
+        </div>
+
+        <div class="score-chip-wrap" id="scoreChips"></div>
+
+        <div class="footer-note">
+          Tip: For your hackathon presentation, explain that this solution uses linear traversal for min, max, mode, and sorting for median.
+        </div>
+      </div>
+
+      <div class="visuals">
+        <div class="panel card">
+          <h2>Performance Metrics</h2>
+          <div class="metrics">
+            <div class="metric">
+              <span>Min Score</span>
+              <strong id="minVal">0</strong>
+            </div>
+            <div class="metric">
+              <span>Max Score</span>
+              <strong id="maxVal">0</strong>
+            </div>
+            <div class="metric">
+              <span>Mode</span>
+              <strong id="modeVal">0</strong>
+            </div>
+            <div class="metric">
+              <span>Average</span>
+              <strong id="avgVal">0</strong>
+            </div>
+            <div class="metric">
+              <span>Median</span>
+              <strong id="medianVal">0</strong>
+            </div>
+            <div class="metric">
+              <span>Total</span>
+              <strong id="sumVal">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel chart-box">
+          <div class="chart-title">
+            <h2 style="margin:0;">Frequency Chart</h2>
+            <div class="legend">Score → Frequency</div>
+          </div>
+          <div class="bars" id="bars">
+            <div class="no-data">No scores added yet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let scores = [];
+
+    function normalizeScore(v) {
+      const n = Number(v);
+      return Number.isFinite(n) && n >= 0 && n <= 100 ? Math.floor(n) : null;
+    }
+
+    function addScore() {
+      const input = document.getElementById('scoreInput');
+      const val = normalizeScore(input.value);
+      if (val === null) return alert('Enter a valid score between 0 and 100.');
+      scores.push(val);
+      input.value = '';
+      updateUI();
+    }
+
+    function addBulkScores() {
+      const bulk = document.getElementById('bulkInput').value.trim();
+      if (!bulk) return;
+      const arr = bulk.split(',').map(s => normalizeScore(s.trim())).filter(v => v !== null);
+      if (!arr.length) return alert('No valid scores found.');
+      scores.push(...arr);
+      document.getElementById('bulkInput').value = '';
+      updateUI();
+    }
+
+    function resetAll() {
+      scores = [];
+      updateUI();
+    }
+
+    function fillDemo() {
+      scores = [78, 92, 65, 88, 92, 74, 81, 95, 67, 88, 90, 72, 92, 85];
+      updateUI();
+    }
+
+    function calcMode(arr) {
+      if (!arr.length) return 0;
+      const freq = {};
+      let mode = arr[0], best = 0;
+      for (const n of arr) {
+        freq[n] = (freq[n] || 0) + 1;
+        if (freq[n] > best || (freq[n] === best && n < mode)) {
+          best = freq[n];
+          mode = n;
+        }
+      }
+      return mode;
+    }
+
+    function updateUI() {
+      const n = scores.length;
+      const sorted = [...scores].sort((a, b) => a - b);
+      const sum = scores.reduce((a, b) => a + b, 0);
+      const min = n ? Math.min(...scores) : 0;
+      const max = n ? Math.max(...scores) : 0;
+      const mode = n ? calcMode(scores) : 0;
+      const avg = n ? (sum / n) : 0;
+      const median = n
+        ? (n % 2 ? sorted[Math.floor(n / 2)] : ((sorted[n / 2 - 1] + sorted[n / 2]) / 2))
+        : 0;
+
+      document.getElementById('totalStudents').textContent = n;
+      document.getElementById('topScore').textContent = max;
+      document.getElementById('lowScore').textContent = min;
+      document.getElementById('modeScore').textContent = mode;
+
+      document.getElementById('minVal').textContent = min;
+      document.getElementById('maxVal').textContent = max;
+      document.getElementById('modeVal').textContent = mode;
+      document.getElementById('avgVal').textContent = n ? avg.toFixed(2) : 0;
+      document.getElementById('medianVal').textContent = median;
+      document.getElementById('sumVal').textContent = sum;
+
+      renderChips();
+      renderBars();
+    }
+
+    function removeScore(index) {
+      scores.splice(index, 1);
+      updateUI();
+    }
+
+    function renderChips() {
+      const wrap = document.getElementById('scoreChips');
+      wrap.innerHTML = '';
+      scores.forEach((score, index) => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.innerHTML = `Score: ${score} <button title="Remove" onclick="removeScore(${index})">&times;</button>`;
+        wrap.appendChild(chip);
+      });
+      if (!scores.length) {
+        wrap.innerHTML = '<div style="color:#94a3b8;">No scores entered yet.</div>';
+      }
+    }
+
+    function renderBars() {
+      const bars = document.getElementById('bars');
+      bars.innerHTML = '';
+      if (!scores.length) {
+        bars.innerHTML = '<div class="no-data">No scores added yet</div>';
+        return;
+      }
+
+      const freq = {};
+      scores.forEach(s => freq[s] = (freq[s] || 0) + 1);
+
+      const entries = Object.entries(freq).sort((a, b) => Number(a[0]) - Number(b[0]));
+      const maxFreq = Math.max(...entries.map(([, count]) => count));
+
+      entries.forEach(([score, count]) => {
+        const group = document.createElement('div');
+        group.className = 'bar-group';
+
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = `${(count / maxFreq) * 200 + 20}px`;
+        bar.title = `Score ${score}: ${count} time(s)`;
+
+        const label = document.createElement('div');
+        label.className = 'bar-label';
+        label.innerHTML = `${score}<br>${count}`;
+
+        group.appendChild(bar);
+        group.appendChild(label);
+        bars.appendChild(group);
+      });
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>

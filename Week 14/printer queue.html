@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Printer Queue System</title>
+
+<style>
+    body {
+        font-family: Arial;
+        background: #f4f6f9;
+        text-align: center;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #333;
+    }
+
+    .container {
+        background: white;
+        padding: 20px;
+        width: 350px;
+        margin: auto;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input {
+        width: 90%;
+        padding: 8px;
+        margin: 8px 0;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        padding: 10px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background: #007bff;
+        color: white;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    .output {
+        margin-top: 20px;
+        text-align: left;
+        background: #eee;
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 100px;
+    }
+</style>
+</head>
+
+<body>
+
+<h2>🖨️ Printer Queue System</h2>
+
+<div class="container">
+
+    <input type="number" id="id" placeholder="Job ID">
+    <input type="text" id="name" placeholder="Document Name">
+    <input type="number" id="pages" placeholder="Number of Pages">
+
+    <br>
+
+    <button onclick="addJob()">Add Job</button>
+    <button onclick="processJob()">Process Job</button>
+    <button onclick="peekJob()">View Next Job</button>
+    <button onclick="displayQueue()">Display Queue</button>
+
+    <div class="output" id="output"></div>
+
+</div>
+
+<script>
+    let queue = [];
+
+    function addJob() {
+        let id = document.getElementById("id").value;
+        let name = document.getElementById("name").value;
+        let pages = document.getElementById("pages").value;
+
+        if (!id || !name || !pages) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        let job = {
+            id: id,
+            name: name,
+            pages: pages
+        };
+
+        queue.push(job);
+
+        document.getElementById("output").innerHTML =
+            `<p>✅ Job Added: ${id} - ${name} (${pages} pages)</p>`;
+        
+        clearInputs();
+    }
+
+    function processJob() {
+        if (queue.length === 0) {
+            document.getElementById("output").innerHTML =
+                "<p>❌ Queue is empty</p>";
+            return;
+        }
+
+        let job = queue.shift();
+
+        document.getElementById("output").innerHTML =
+            `<p>🖨️ Processing: ${job.id} - ${job.name} (${job.pages} pages)</p>`;
+    }
+
+    function peekJob() {
+        if (queue.length === 0) {
+            document.getElementById("output").innerHTML =
+                "<p>❌ No jobs in queue</p>";
+            return;
+        }
+
+        let job = queue[0];
+
+        document.getElementById("output").innerHTML =
+            `<p>🔍 Next Job: ${job.id} - ${job.name} (${job.pages} pages)</p>`;
+    }
+
+    function displayQueue() {
+        if (queue.length === 0) {
+            document.getElementById("output").innerHTML =
+                "<p>❌ Queue is empty</p>";
+            return;
+        }
+
+        let output = "<h3>📋 Queue (FIFO Order):</h3>";
+
+        queue.forEach((job, index) => {
+            output += `<p>${index + 1}. ${job.id} - ${job.name} (${job.pages} pages)</p>`;
+        });
+
+        document.getElementById("output").innerHTML = output;
+    }
+
+    function clearInputs() {
+        document.getElementById("id").value = "";
+        document.getElementById("name").value = "";
+        document.getElementById("pages").value = "";
+    }
+</script>
+
+</body>
+</html>
